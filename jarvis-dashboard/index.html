@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>贾维斯 AI 控制面板 v2.0</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav class="sidebar">
+        <div class="logo">
+            <span class="ai-icon">🤖</span>
+            <div class="logo-text">
+                <span class="main-text">贾维斯 AI</span>
+                <span class="sub-text">控制面板 v2.0</span>
+            </div>
+        </div>
+        <ul class="nav-menu">
+            <li class="nav-item active" data-page="dashboard"><span class="nav-icon">📊</span><span>仪表盘</span></li>
+            <li class="nav-item" data-page="monitor"><span class="nav-icon">📈</span><span>系统监控</span></li>
+            <li class="nav-item" data-page="containers"><span class="nav-icon">🐳</span><span>容器管理</span></li>
+            <li class="nav-item" data-page="files"><span class="nav-icon">📁</span><span>文件管理</span></li>
+            <li class="nav-item" data-page="terminal"><span class="nav-icon">🔧</span><span>终端</span></li>
+            <li class="nav-item" data-page="logs"><span class="nav-icon">📝</span><span>日志查看</span></li>
+            <li class="nav-item" data-page="network"><span class="nav-icon">🌐</span><span>网络工具</span></li>
+            <li class="nav-item" data-page="ai-config"><span class="nav-icon">🤖</span><span>AI 配置</span></li>
+            <li class="nav-item" data-page="skills"><span class="nav-icon">🧩</span><span>Skills</span></li>
+            <li class="nav-item" data-page="quick-commands"><span class="nav-icon">⚡</span><span>快捷命令</span></li>
+            <li class="nav-item" data-page="settings"><span class="nav-icon">⚙️</span><span>设置</span></li>
+        </ul>
+        <div class="sidebar-footer">
+            <div class="version-info" id="versionInfo">v2.0.0 • 2026-02-25</div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <header class="top-header">
+            <div class="search-box">
+                <input type="text" placeholder="搜索命令、文件、文档..." id="globalSearch">
+                <span class="search-icon">🔍</span>
+            </div>
+            <div class="header-actions">
+                <div class="ai-status online" id="aiStatus">
+                    <span class="status-dot"></span><span>AI 在线</span>
+                </div>
+                <div class="server-status">
+                    <span>🖥️ 服务器正常</span>
+                </div>
+                <button class="btn-notification">🔔</button>
+                <button class="btn-profile">👤</button>
+            </div>
+        </header>
+
+        <div class="page-content">
+            <!-- 仪表盘 -->
+            <section id="dashboard" class="page active">
+                <h1>📊 仪表盘</h1>
+                <div class="dashboard-grid">
+                    <div class="card system-status">
+                        <h3>🖥️ 系统状态</h3>
+                        <div class="status-items">
+                            <div class="status-item"><span class="label">CPU</span><div class="progress-bar"><div class="progress" id="cpuUsage" style="width: 30%"></div></div><span class="value" id="cpuValue">30%</span></div>
+                            <div class="status-item"><span class="label">内存</span><div class="progress-bar"><div class="progress progress-green" id="memUsage" style="width: 45%"></div></div><span class="value" id="memValue">45%</span></div>
+                            <div class="status-item"><span class="label">磁盘</span><div class="progress-bar"><div class="progress progress-orange" id="diskUsage" style="width: 30%"></div></div><span class="value" id="diskValue">30%</span></div>
+                            <div class="status-item"><span class="label">网络</span><div class="progress-bar"><div class="progress progress-purple" id="networkUsage" style="width: 15%"></div></div><span class="value" id="networkValue">15 MB/s</span></div>
+                        </div>
+                    </div>
+                    <div class="card stats-merged">
+                        <div class="stats-section">
+                            <h3>🤖 AI Agents 统计</h3>
+                            <div class="stats-grid">
+                                <div class="stat-item"><span class="stat-number" id="agentTotal">-</span><span class="stat-label">总数</span></div>
+                                <div class="stat-item"><span class="stat-number agent" id="agentRunning">-</span><span class="stat-label">运行中</span></div>
+                                <div class="stat-item"><span class="stat-number auto" id="agentStopped">-</span><span class="stat-label">未运行</span></div>
+                            </div>
+                        </div>
+                        <div class="stats-section">
+                            <h3>🧩 Skills 统计</h3>
+                            <div class="stats-grid">
+                                <div class="stat-item"><span class="stat-number" id="skillTotal">-</span><span class="stat-label">已安装</span></div>
+                                <div class="stat-item"><span class="stat-number coding" id="skillCoding">-</span><span class="stat-label">编程</span></div>
+                                <div class="stat-item"><span class="stat-number auto" id="skillAuto">-</span><span class="stat-label">自动化</span></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card quick-actions">
+                        <h3>⚡ 快速操作</h3>
+                        <div class="action-buttons">
+                            <button class="action-btn" onclick="executeCommand('系统检查')"><span class="action-icon">🔍</span><span>系统检查</span></button>
+                            <button class="action-btn" onclick="executeCommand('更新Skills')"><span class="action-icon">📦</span><span>更新Skills</span></button>
+                            <button class="action-btn" onclick="executeCommand('清理缓存')"><span class="action-icon">🧹</span><span>清理缓存</span></button>
+                            <button class="action-btn" onclick="executeCommand('备份数据')"><span class="action-icon">💾</span><span>备份数据</span></button>
+                            <button class="action-btn" onclick="executeCommand('重启服务')"><span class="action-icon">🔄</span><span>重启服务</span></button>
+                            <button class="action-btn" onclick="executeCommand('安全扫描')"><span class="action-icon">🔐</span><span>安全扫描</span></button>
+                        </div>
+                    </div>
+                    <div class="card container-stats">
+                        <h3>🐳 Docker 容器</h3>
+                        <div class="container-summary">
+                            <div class="container-item running"><span class="count">4</span><span class="label">运行中</span></div>
+                            <div class="container-item stopped"><span class="count">0</span><span class="label">已停止</span></div>
+                            <div class="container-item total"><span class="count">4</span><span class="label">总容器</span></div>
+                        </div>
+                    </div>
+                    <div class="card recent-activity">
+                        <h3>📋 最近活动</h3>
+                        <ul class="activity-list" id="activityList">
+                            <li class="activity-item"><span class="activity-icon">🚀</span><span class="activity-text">贾维斯控制面板 v2.0 已启动</span><span class="activity-time">刚刚</span></li>
+                        </ul>
+                    </div>
+                    <div class="card v2ray-status">
+                        <h3>🛡️ v2ray 代理</h3>
+                        <div class="v2ray-info">
+                            <div class="v2ray-item"><span class="label">状态</span><span class="value status-active">● 运行中</span></div>
+                            <div class="v2ray-item"><span class="label">协议</span><span class="value">VLESS-WS-TLS</span></div>
+                            <div class="v2ray-item"><span class="label">出口IP</span><span class="value" id="v2rayIP">107.174.131.32</span></div>
+                            <div class="v2ray-item"><span class="label">端口</span><span class="value">10808 (SOCKS5)</span></div>
+                            <div class="v2ray-item"><span class="label">服务器</span><span class="value">vless9.szmanlee.eu.org</span></div>
+                        </div>
+                        <button class="btn-refresh-v2ray" onclick="refreshV2rayIP()">🔄 刷新IP</button>
+                    </div>
+                    <div class="card system-info">
+                        <h3>💻 系统信息</h3>
+                        <div class="info-grid">
+                            <div class="info-item"><span class="label">主机名</span><span class="value" id="hostname">ubuntu</span></div>
+                            <div class="info-item"><span class="label">系统</span><span class="value">Linux 6.8</span></div>
+                            <div class="info-item"><span class="label">运行时间</span><span class="value" id="uptime">-</span></div>
+                            <div class="info-item"><span class="label">内核</span><span class="value">6.8.0-41</span></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 系统监控 -->
+            <section id="monitor" class="page">
+                <h1>📈 系统监控</h1>
+                <div class="monitor-grid">
+                    <div class="monitor-card"><h3>📊 CPU</h3><div class="mini-chart"><span id="cpuPercent" style="font-size: 24px; font-weight: bold;">--%</span></div></div>
+                    <div class="monitor-card"><h3>💾 内存</h3><div class="memory-chart"><div class="mem-ring" id="memPercent">--%</div><div class="mem-details"><span id="memUsed">--GB</span><span id="memTotal">--GB</span></div></div></div>
+                    <div class="monitor-card"><h3>📁 磁盘</h3><div class="disk-bar"><div class="used" style="width: 30%"></div></div><span id="diskPercent">--%</span> <span id="diskUsed">-- / --</span></div>
+                    <div class="monitor-card"><h3>🌐 网络</h3><div class="network-stats"><span>↓ -- MB</span><span>↑ -- MB</span><span>连接: --</span></div></div>
+                </div>
+                <div class="process-section"><h3>⚙️ 进程列表</h3><div class="process-table"><table><thead><tr><th>PID</th><th>名称</th><th>CPU%</th><th>内存%</th><th>状态</th></tr></thead><tbody id="processList"></tbody></table></div></div>
+            </section>
+
+            <!-- 容器管理 -->
+            <section id="containers" class="page">
+                <h1>🐳 Docker 容器管理</h1>
+                <div class="container-toolbar">
+                    <button class="btn-toolbar" onclick="refreshContainers()">🔄 刷新</button>
+                    <button class="btn-toolbar" onclick="startAllContainers()">▶️ 启动全部</button>
+                    <button class="btn-toolbar" onclick="stopAllContainers()">⏹️ 停止全部</button>
+                </div>
+                <div class="containers-grid" id="containersGrid"></div>
+            </section>
+
+            <!-- 文件管理 -->
+            <section id="files" class="page">
+                <h1>📁 文件管理</h1>
+                <div class="file-toolbar">
+                    <div class="breadcrumb" id="fileBreadcrumb">/root/.openclaw/workspace/</div>
+                    <div class="file-actions"><button class="btn-toolbar" onclick="goBack()">⬅️</button><button class="btn-toolbar" onclick="refreshFiles()">🔄</button></div>
+                </div>
+                <div class="file-list" id="fileList"></div>
+            </section>
+
+            <!-- 终端 -->
+            <section id="terminal" class="page">
+                <h1>🔧 终端</h1>
+                <div class="terminal-container">
+                    <div class="terminal-output" id="terminalOutput"><div class="terminal-line">贾维斯终端 v2.0</div><div class="terminal-line">输入 'help' 查看帮助</div></div>
+                    <div class="terminal-input"><span class="prompt">➜ ~</span><input type="text" id="terminalInput"></div>
+                </div>
+                <div class="terminal-shortcuts"><span>快捷键: Ctrl+L 清除 | Ctrl+C 中断</span></div>
+            </section>
+
+            <!-- 日志 -->
+            <section id="logs" class="page">
+                <h1>📝 日志查看</h1>
+                <div class="log-toolbar">
+                    <select id="logFile"><option value="syslog">系统日志</option><option value="jarvis">贾维斯日志</option></select>
+                    <button class="btn-toolbar" onclick="loadLog()">🔄</button>
+                </div>
+                <div class="log-content" id="logContent"></div>
+            </section>
+
+            <!-- 网络工具 -->
+            <section id="network" class="page">
+                <h1>🌐 网络工具</h1>
+                <div class="network-tools">
+                    <div class="network-tool"><h3>🔗 Ping</h3><div class="tool-input"><input id="pingHost" value="8.8.8.8"><button onclick="runPing()">测试</button></div><div class="tool-output" id="pingOutput"></div></div>
+                    <div class="network-tool"><h3>🔌 端口</h3><div class="tool-input"><input id="portHost" value="localhost" style="width:100px"><input id="portNum" value="80" type="number" style="width:70px"><button onclick="checkPort()">检查</button></div><div class="tool-output" id="portOutput"></div></div>
+                    <div class="network-tool"><h3>📡 DNS</h3><div class="tool-input"><input id="dnsHost" placeholder="域名"><button onclick="runDNS()">查询</button></div><div class="tool-output" id="dnsOutput"></div></div>
+                </div>
+            </section>
+
+            <!-- AI 配置 -->
+            <section id="ai-config" class="page">
+                <h1>🤖 AI 配置</h1>
+                <div class="ai-config-grid">
+                    <div class="ai-card"><h3>🧠 当前模型</h3><div class="model-info"><span class="model-name">NVIDIA minimax-m2.1</span><span class="model-status online">● 在线</span></div><div class="model-stats"><div class="stat"><span>请求</span><span>1,234</span></div><div class="stat"><span>响应</span><span>0.8s</span></div></div></div>
+                    <div class="ai-card"><h3>🔑 API Keys</h3><div class="api-list"><div class="api-item"><span>NVIDIA</span><span class="api-status configured">已配置</span></div><div class="api-item"><span>DeepSeek</span><span class="api-status configured">已配置</span></div></div></div>
+                    <div class="ai-card"><h3>⚡ 性能</h3><div class="config-item"><label>Max Tokens</label><input type="range" min="1000" max="32000" value="8000"></div><div class="config-item"><label>Temperature</label><input type="range" min="0" max="100" value="70"></div></div>
+                </div>
+            </section>
+
+            <!-- Skills -->
+            <section id="skills" class="page">
+                <h1>🧩 Skills 管理</h1>
+                
+                <!-- Agents 区域 -->
+                <h2 style="margin-top: 20px;">🤖 AI Agents</h2>
+                <div class="skills-grid" id="agentsGrid">
+                    <div class="empty-state">加载中...</div>
+                </div>
+                
+                <!-- Skills 区域 -->
+                <h2 style="margin-top: 30px;">📦 Skills</h2>
+                <div class="skills-toolbar"><div class="skills-filters"><button class="filter-btn active">全部</button><button class="filter-btn">智能体</button><button class="filter-btn">编程</button><button class="filter-btn">自动化</button></div></div>
+                <div class="skills-grid" id="skillsGrid"></div>
+            </section>
+
+            <!-- 快捷命令 -->
+            <section id="quick-commands" class="page">
+                <h1>⚡ 快捷命令</h1>
+                <div class="commands-grid">
+                    <div class="command-category"><h3>🖥️ 系统</h3><div class="command-list"><div class="command-item" onclick="runQuickCmd('系统检查')"><code>系统检查</code><span>检查状态</span></div><div class="command-item" onclick="runQuickCmd('内存清理')"><code>内存清理</code><span>释放内存</span></div><div class="command-item" onclick="runQuickCmd('磁盘清理')"><code>磁盘清理</code><span>清理磁盘</span></div></div></div>
+                    <div class="command-category"><h3>🐳 Docker</h3><div class="command-list"><div class="command-item" onclick="runQuickCmd('容器列表')"><code>容器列表</code><span>显示容器</span></div><div class="command-item" onclick="runQuickCmd('镜像清理')"><code>镜像清理</code><span>清理镜像</span></div></div></div>
+                    <div class="command-category"><h3>📦 Skills</h3><div class="command-list"><div class="command-item" onclick="runQuickCmd('Skills列表')"><code>Skills列表</code><span>列出 Skills</span></div><div class="command-item" onclick="runQuickCmd('更新Skills')"><code>更新Skills</code><span>更新所有</span></div></div></div>
+                </div>
+            </section>
+
+            <!-- 设置 -->
+            <section id="settings" class="page">
+                <h1>⚙️ 设置</h1>
+                <div class="settings-grid">
+                    <div class="settings-card"><h3>🎨 外观</h3><div class="setting-item"><label>主题</label><select><option>深色</option><option>浅色</option></select></div><div class="setting-item"><label>动画</label><input type="checkbox" checked></div></div>
+                    <div class="settings-card"><h3>🔔 通知</h3><div class="setting-item"><label>桌面通知</label><input type="checkbox" checked></div><div class="setting-item"><label>声音</label><input type="checkbox"></div></div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能收租统计系统</title>
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #64748b;
+            --background: #ffffff;
+            --surface: #f8fafc;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border: #e2e8f0;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--background);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 300;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.025em;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 1.125rem;
+        }
+
+        .controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .upload-area {
+            position: relative;
+            padding: 2rem;
+            border: 2px dashed var(--border);
+            border-radius: 12px;
+            background: var(--surface);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .upload-area:hover {
+            border-color: var(--primary-color);
+            background: #f1f5f9;
+        }
+
+        .upload-area.dragover {
+            border-color: var(--primary-color);
+            background: #dbeafe;
+        }
+
+        .upload-icon {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 1rem;
+            color: var(--text-secondary);
+        }
+
+        .upload-text {
+            text-align: center;
+            color: var(--text-secondary);
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        .processing-indicator {
+            display: none;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem 1.5rem;
+            background: var(--surface);
+            border-radius: 8px;
+            color: var(--text-secondary);
+        }
+
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--border);
+            border-top: 2px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .table-container {
+            background: var(--background);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid var(--border);
+            transition: background-color 0.2s ease;
+        }
+
+        tbody tr:hover {
+            background: var(--surface);
+        }
+
+        td {
+            padding: 1rem;
+            color: var(--text-primary);
+        }
+
+        .editable {
+            background: transparent;
+            border: 1px solid transparent;
+            padding: 0.5rem;
+            border-radius: 6px;
+            width: 100%;
+            transition: all 0.2s ease;
+        }
+
+        .editable:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background: var(--background);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .editable:hover {
+            background: var(--surface);
+        }
+
+        .summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .summary-card {
+            background: var(--surface);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .summary-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .summary-value {
+            font-size: 2rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .summary-card.highlight .summary-value {
+            color: var(--primary-color);
+        }
+
+        .button {
+            padding: 0.75rem 1.5rem;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .button:hover {
+            background: #1d4ed8;
+            transform: translateY(-1px);
+        }
+
+        .button:active {
+            transform: translateY(0);
+        }
+
+        .button-secondary {
+            background: var(--secondary-color);
+        }
+
+        .button-secondary:hover {
+            background: #475569;
+        }
+
+        .status-message {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        .status-success {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .status-error {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--error);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            h1 {
+                font-size: 1.875rem;
+            }
+
+            .controls {
+                flex-direction: column;
+            }
+
+            .table-container {
+                overflow-x: auto;
+            }
+
+            table {
+                min-width: 800px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>智能收租统计系统</h1>
+            <p class="subtitle">高效管理 · 精准统计 · 自动化处理</p>
+        </header>
+
+        <div class="status-message" id="statusMessage"></div>
+
+        <section class="controls">
+            <div class="upload-area" id="uploadArea">
+                <svg class="upload-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                </svg>
+                <div class="upload-text">
+                    <p><strong>点击上传水电费清单图片</strong></p>
+                    <p>支持 JPG、PNG、GIF 格式，系统将自动识别水电度数</p>
+                </div>
+                <input type="file" id="fileInput" accept="image/*">
+            </div>
+
+            <div class="processing-indicator" id="processingIndicator">
+                <div class="spinner"></div>
+                <span>正在识别图片中的数据...</span>
+            </div>
+
+            <button class="button button-secondary" onclick="resetData()">重置数据</button>
+            <button class="button" onclick="exportData()">导出统计</button>
+        </section>
+
+        <main class="table-container">
+            <table id="rentTable">
+                <thead>
+                    <tr>
+                        <th>房号</th>
+                        <th>上月水表</th>
+                        <th>当月水表</th>
+                        <th>用水吨数</th>
+                        <th>上月电表</th>
+                        <th>当月电表</th>
+                        <th>用电度数</th>
+                        <th>水费</th>
+                        <th>电费</th>
+                        <th>固定房租</th>
+                        <th>管理费</th>
+                        <th>总费用</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                </tbody>
+            </table>
+        </main>
+
+        <section class="summary" id="summary">
+        </section>
+    </div>
+
+    <script>
+        // 初始化数据
+        const rooms = Array.from({length: 19}, (_, i) => (i + 1).toString().padStart(3, '0'));
+        const waterRate = 7; // 元/吨
+        const electricityRate = 1; // 元/度
+        const baseRent = 2000; // 固定房租
+        const managementFee = 100; // 管理费
+
+        let apartmentData = {};
+
+        // 初始化公寓数据
+        function initializeData() {
+            rooms.forEach(room => {
+                apartmentData[room] = {
+                    roomNumber: room,
+                    lastWaterReading: 0,
+                    currentWaterReading: 0,
+                    waterUsage: 0,
+                    lastElectricReading: 0,
+                    currentElectricReading: 0,
+                    electricUsage: 0,
+                    waterFee: 0,
+                    electricFee: 0,
+                    baseRent: baseRent,
+                    managementFee: managementFee,
+                    totalFee: baseRent + managementFee
+                };
+            });
+        }
+
+        // 渲染表格
+        function renderTable() {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+
+            rooms.forEach(room => {
+                const data = apartmentData[room];
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><strong>${room}</strong></td>
+                    <td><input type="number" class="editable" value="${data.lastWaterReading}" onchange="updateData('${room}', 'lastWaterReading', this.value)"></td>
+                    <td><input type="number" class="editable" value="${data.currentWaterReading}" onchange="updateData('${room}', 'currentWaterReading', this.value)"></td>
+                    <td>${data.waterUsage}</td>
+                    <td><input type="number" class="editable" value="${data.lastElectricReading}" onchange="updateData('${room}', 'lastElectricReading', this.value)"></td>
+                    <td><input type="number" class="editable" value="${data.currentElectricReading}" onchange="updateData('${room}', 'currentElectricReading', this.value)"></td>
+                    <td>${data.electricUsage}</td>
+                    <td>¥${data.waterFee}</td>
+                    <td>¥${data.electricFee}</td>
+                    <td>¥${data.baseRent}</td>
+                    <td>¥${data.managementFee}</td>
+                    <td><strong>¥${data.totalFee}</strong></td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            updateSummary();
+        }
+
+        // 更新数据
+        function updateData(room, field, value) {
+            const numValue = parseFloat(value) || 0;
+            apartmentData[room][field] = numValue;
+
+            // 重新计算用量和费用
+            const data = apartmentData[room];
+            data.waterUsage = data.currentWaterReading - data.lastWaterReading;
+            data.electricUsage = data.currentElectricReading - data.lastElectricReading;
+            data.waterFee = Math.max(0, data.waterUsage) * waterRate;
+            data.electricFee = Math.max(0, data.electricUsage) * electricityRate;
+            data.totalFee = data.waterFee + data.electricFee + data.baseRent + data.managementFee;
+
+            renderTable();
+        }
+
+        // 更新汇总信息
+        function updateSummary() {
+            const summary = document.getElementById('summary');
+            
+            let totalWaterUsage = 0;
+            let totalElectricUsage = 0;
+            let totalWaterFee = 0;
+            let totalElectricFee = 0;
+            let totalRent = 0;
+            let totalManagement = 0;
+            let grandTotal = 0;
+
+            rooms.forEach(room => {
+                const data = apartmentData[room];
+                totalWaterUsage += data.waterUsage;
+                totalElectricUsage += data.electricUsage;
+                totalWaterFee += data.waterFee;
+                totalElectricFee += data.electricFee;
+                totalRent += data.baseRent;
+                totalManagement += data.managementFee;
+                grandTotal += data.totalFee;
+            });
+
+            summary.innerHTML = `
+                <div class="summary-card">
+                    <div class="summary-label">总用水量</div>
+                    <div class="summary-value">${totalWaterUsage} 吨</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-label">总用电量</div>
+                    <div class="summary-value">${totalElectricUsage} 度</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-label">水费总计</div>
+                    <div class="summary-value">¥${totalWaterFee}</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-label">电费总计</div>
+                    <div class="summary-value">¥${totalElectricFee}</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-label">房租总计</div>
+                    <div class="summary-value">¥${totalRent}</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-label">管理费总计</div>
+                    <div class="summary-value">¥${totalManagement}</div>
+                </div>
+                <div class="summary-card highlight">
+                    <div class="summary-label">费用总计</div>
+                    <div class="summary-value">¥${grandTotal}</div>
+                </div>
+            `;
+        }
+
+        // 文件上传处理
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const processingIndicator = document.getElementById('processingIndicator');
+
+        uploadArea.addEventListener('click', () => fileInput.click());
+
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFileUpload(files[0]);
+            }
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFileUpload(e.target.files[0]);
+            }
+        });
+
+        // 处理文件上传和OCR识别
+        async function handleFileUpload(file) {
+            if (!file.type.startsWith('image/')) {
+                showStatus('请上传图片文件', 'error');
+                return;
+            }
+
+            processingIndicator.style.display = 'flex';
+            showStatus('正在识别图片中的数据...', 'success');
+
+            try {
+                const result = await Tesseract.recognize(file, 'chi_sim+eng', {
+                    logger: m => console.log(m)
+                });
+
+                const text = result.data.text;
+                const recognizedData = parseUtilityReadings(text);
+                
+                if (recognizedData.length > 0) {
+                    applyRecognizedData(recognizedData);
+                    showStatus(`成功识别 ${recognizedData.length} 条数据`, 'success');
+                } else {
+                    showStatus('未能识别到有效数据，请手动输入', 'error');
+                }
+            } catch (error) {
+                console.error('OCR识别失败:', error);
+                showStatus('图片识别失败，请检查图片质量或手动输入', 'error');
+            } finally {
+                processingIndicator.style.display = 'none';
+            }
+        }
+
+        // 解析水电读数
+        function parseUtilityReadings(text) {
+            const lines = text.split('\n').filter(line => line.trim());
+            const data = [];
+
+            lines.forEach(line => {
+                // 匹配房号和数字的模式
+                const roomMatch = line.match(/(\d{3})室?[:：]?[-\s]*(\d+(?:\.\d+)?)/);
+                if (roomMatch) {
+                    const room = roomMatch[1].padStart(3, '0');
+                    const value = parseFloat(roomMatch[2]);
+                    
+                    if (rooms.includes(room) && !isNaN(value)) {
+                        data.push({ room, value });
+                    }
+                }
+            });
+
+            return data;
+        }
+
+        // 应用识别的数据
+        function applyRecognizedData(data) {
+            // 简单策略：如果有19个数据点，前9个是水表，后10个是电表
+            if (data.length === 19) {
+                // 假设前9个是水表读数
+                for (let i = 0; i < 9; i++) {
+                    const item = data[i];
+                    if (item) {
+                        apartmentData[item.room].currentWaterReading = item.value;
+                        updateData(item.room, 'currentWaterReading', item.value);
+                    }
+                }
+                
+                // 假设后10个是电表读数
+                for (let i = 9; i < 19; i++) {
+                    const item = data[i];
+                    if (item) {
+                        apartmentData[item.room].currentElectricReading = item.value;
+                        updateData(item.room, 'currentElectricReading', item.value);
+                    }
+                }
+            } else {
+                // 如果数据不完整，尽可能应用
+                data.forEach(item => {
+                    if (Math.random() > 0.5) {
+                        apartmentData[item.room].currentWaterReading = item.value;
+                        updateData(item.room, 'currentWaterReading', item.value);
+                    } else {
+                        apartmentData[item.room].currentElectricReading = item.value;
+                        updateData(item.room, 'currentElectricReading', item.value);
+                    }
+                });
+            }
+        }
+
+        // 显示状态消息
+        function showStatus(message, type) {
+            const statusElement = document.getElementById('statusMessage');
+            statusElement.textContent = message;
+            statusElement.className = `status-message status-${type}`;
+            statusElement.style.display = 'block';
+
+            setTimeout(() => {
+                statusElement.style.display = 'none';
+            }, 5000);
+        }
+
+        // 重置数据
+        function resetData() {
+            if (confirm('确定要重置所有数据吗？')) {
+                initializeData();
+                renderTable();
+                showStatus('数据已重置', 'success');
+            }
+        }
+
+        // 导出数据
+        function exportData() {
+            const data = [];
+            rooms.forEach(room => {
+                const apartment = apartmentData[room];
+                data.push({
+                    房号: room,
+                    上月水表: apartment.lastWaterReading,
+                    当月水表: apartment.currentWaterReading,
+                    用水吨数: apartment.waterUsage,
+                    上月电表: apartment.lastElectricReading,
+                    当月电表: apartment.currentElectricReading,
+                    用电度数: apartment.electricUsage,
+                    水费: apartment.waterFee,
+                    电费: apartment.electricFee,
+                    固定房租: apartment.baseRent,
+                    管理费: apartment.managementFee,
+                    总费用: apartment.totalFee
+                });
+            });
+
+            // 汇总数据
+            const summary = data.reduce((acc, curr) => {
+                acc.总用水量 += curr.用水吨数;
+                acc.总用电量 += curr.用电度数;
+                acc.水费总计 += curr.水费;
+                acc.电费总计 += curr.电费;
+                acc.房租总计 += curr.固定房租;
+                acc.管理费总计 += curr.管理费;
+                acc.费用总计 += curr.总费用;
+                return acc;
+            }, {
+                总用水量: 0,
+                总用电量: 0,
+                水费总计: 0,
+                电费总计: 0,
+                房租总计: 0,
+                管理费总计: 0,
+                费用总计: 0
+            });
+
+            // 创建CSV内容
+            let csvContent = "data:text/csv;charset=utf-8,";
+            
+            // 添加详细数据
+            csvContent += "房号,上月水表,当月水表,用水吨数,上月电表,当月电表,用电度数,水费,电费,固定房租,管理费,总费用\n";
+            data.forEach(row => {
+                csvContent += Object.values(row).join(',') + '\n';
+            });
+
+            csvContent += '\n汇总统计\n';
+            csvContent += `总用水量,${summary.总用水量}\n`;
+            csvContent += `总用电量,${summary.总用电量}\n`;
+            csvContent += `水费总计,${summary.水费总计}\n`;
+            csvContent += `电费总计,${summary.电费总计}\n`;
+            csvContent += `房租总计,${summary.房租总计}\n`;
+            csvContent += `管理费总计,${summary.管理费总计}\n`;
+            csvContent += `费用总计,${summary.费用总计}\n`;
+
+            // 创建下载链接
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `收租统计_${new Date().toISOString().split('T')[0]}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            showStatus('数据导出成功', 'success');
+        }
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeData();
+            renderTable();
+        });
+    </script>
+</body>
+</html>

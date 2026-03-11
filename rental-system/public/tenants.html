@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>住户管理 - 石岩房租管理系统</title>
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #64748b;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --background: #f8fafc;
+            --card-bg: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+            --shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+            --shadow-lg: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: var(--background);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, var(--primary-color), #1d4ed8);
+            color: white;
+            padding: 1.5rem 0;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .back-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s;
+            text-decoration: none;
+            font-size: 1rem;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        /* Navigation */
+        nav {
+            background: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 0;
+            margin-bottom: 2rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-stats {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-stat {
+            text-align: center;
+        }
+
+        .nav-stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .nav-stat-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        /* Main Content */
+        .main-section {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Table Section */
+        .table-section {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .table-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn:hover {
+            background: #1d4ed8;
+            transform: translateY(-1px);
+        }
+
+        .btn-success {
+            background: var(--success-color);
+        }
+
+        .btn-success:hover {
+            background: #059669;
+        }
+
+        .btn-warning {
+            background: var(--warning-color);
+        }
+
+        .btn-warning:hover {
+            background: #d97706;
+        }
+
+        .btn-danger {
+            background: var(--danger-color);
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
+        .btn-sm {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+        }
+
+        /* Table */
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background: var(--background);
+            font-weight: 600;
+            color: var(--text-primary);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        td {
+            vertical-align: middle;
+        }
+
+        .room-cell {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--primary-color), #1d4ed8);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .quick-actions {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        .quick-actions h3 {
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .action-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 2rem;
+        }
+
+        .btn-cancel {
+            background: var(--secondary-color);
+        }
+
+        .btn-cancel:hover {
+            background: #475569;
+        }
+
+        /* Loading */
+        .loading {
+            display: flex;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .spinner {
+            border: 3px solid var(--border-color);
+            border-top: 3px solid var(--primary-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .main-section {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                grid-row: 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 10px;
+            }
+
+            .table-wrapper {
+                font-size: 0.75rem;
+            }
+
+            th, td {
+                padding: 0.5rem;
+            }
+
+            .nav-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="header-left">
+                    <a href="/" class="back-btn">← 返回主页</a>
+                    <h1>👥 住户信息管理</h1>
+                </div>
+                <div id="headerDate"></div>
+            </div>
+        </div>
+    </header>
+
+    <nav>
+        <div class="container">
+            <div class="nav-content">
+                <div class="nav-stats">
+                    <div class="nav-stat">
+                        <div class="nav-stat-value" id="totalTenants">-</div>
+                        <div class="nav-stat-label">住户总数</div>
+                    </div>
+                    <div class="nav-stat">
+                        <div class="nav-stat-value" id="totalDeposit">¥-</div>
+                        <div class="nav-stat-label">押金总额</div>
+                    </div>
+                    <div class="nav-stat">
+                        <div class="nav-stat-value" id="totalRent">¥-</div>
+                        <div class="nav-stat-label">月租总额</div>
+                    </div>
+                    <div class="nav-stat">
+                        <div class="nav-stat-value" id="avgRent">¥-</div>
+                        <div class="nav-stat-label">平均房租</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+        <div class="main-section">
+            <!-- 住户列表 -->
+            <section class="table-section">
+                <div class="table-header">
+                    <h2 class="table-title">🏠 住户信息列表</h2>
+                    <button class="btn btn-success" onclick="showAddTenantModal()">
+                        ➕ 添加住户
+                    </button>
+                </div>
+                <div class="table-wrapper">
+                    <table id="tenantsTable">
+                        <thead>
+                            <tr>
+                                <th>房号</th>
+                                <th>住户姓名</th>
+                                <th>房屋编码</th>
+                                <th>押金</th>
+                                <th>月租</th>
+                                <th>状态</th>
+                                <th>创建时间</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tenantsTableBody">
+                            <tr>
+                                <td colspan="8" class="loading">
+                                    <div class="spinner"></div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- 侧边栏 -->
+            <aside class="sidebar">
+                <!-- 统计信息 -->
+                <div class="stat-card">
+                    <div class="stat-icon">🏠</div>
+                    <div class="stat-label">空置率</div>
+                    <div class="stat-value" id="vacancyRate">-</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">💰</div>
+                    <div class="stat-label">总收入</div>
+                    <div class="stat-value" id="monthlyIncome">¥-</div>
+                </div>
+
+                <!-- 快速操作 -->
+                <div class="quick-actions">
+                    <h3>🚀 快速操作</h3>
+                    <div class="action-list">
+                        <button class="btn btn-success" onclick="exportTenantsData()">
+                            📤 导出住户数据
+                        </button>
+                        <button class="btn" onclick="showAddTenantModal()">
+                            ➕ 添加新住户
+                        </button>
+                        <button class="btn btn-warning" onclick="backupData()">
+                            💾 备份数据
+                        </button>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </main>
+
+    <!-- 添加/编辑住户模态框 -->
+    <div id="tenantModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">➕ 添加新住户</h3>
+            </div>
+            <form id="tenantForm">
+                <input type="hidden" id="tenantId" value="">
+                
+                <div class="form-group">
+                    <label class="form-label">房号 *</label>
+                    <input type="text" class="form-control" id="roomNumber" required placeholder="例如: 101, 201, 301">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">住户姓名 *</label>
+                    <input type="text" class="form-control" id="tenantName" required placeholder="请输入住户姓名">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">房屋编码</label>
+                    <input type="text" class="form-control" id="roomCode" placeholder="例如: 4403060060021400173000001">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">押金 (¥)</label>
+                    <input type="number" class="form-control" id="deposit" min="0" placeholder="0">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">月租 (¥)</label>
+                    <input type="number" class="form-control" id="rentAmount" min="0" required placeholder="2000">
+                </div>
+                
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-cancel" onclick="hideTenantModal()">取消</button>
+                    <button type="submit" class="btn btn-success" id="submitBtn">添加住户</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // 全局变量
+        let tenantsData = [];
+        let currentEditingId = null;
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            updateCurrentTime();
+            setInterval(updateCurrentTime, 1000);
+            loadTenants();
+            
+            // 表单事件
+            document.getElementById('tenantForm').addEventListener('submit', handleTenantSubmit);
+        });
+
+        // 更新当前时间
+        function updateCurrentTime() {
+            const now = new Date();
+            const timeString = now.toLocaleString('zh-CN', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                weekday: 'long'
+            });
+            document.getElementById('headerDate').textContent = timeString;
+        }
+
+        // 加载住户列表
+        async function loadTenants() {
+            try {
+                console.log('开始加载住户数据...');
+                console.log('当前时间:', new Date().toLocaleString());
+                
+                // 显示加载状态
+                const tbody = document.getElementById('tenantsTableBody');
+                if (tbody) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="8" style="text-align: center; padding: 2rem;">
+                                <div class="spinner"></div>
+                                <p style="margin-top: 1rem;">正在加载住户数据...</p>
+                            </td>
+                        </tr>
+                    `;
+                }
+                
+                // 设置超时保护
+                const timeoutPromise = new Promise((_, reject) => {
+                    setTimeout(() => reject(new Error('请求超时')), 10000);
+                });
+                
+                const dataPromise = fetch('/api/tenants').then(response => {
+                    console.log('API响应状态:', response.status);
+                    if (!response.ok) throw new Error('Failed to load tenants');
+                    return response.json();
+                });
+                
+                tenantsData = await Promise.race([dataPromise, timeoutPromise]);
+                
+                console.log('获取的住户数据:', tenantsData);
+                console.log('数据长度:', tenantsData.length);
+                
+                renderTable();
+                updateStatistics();
+                
+                console.log('住户数据加载完成');
+            } catch (error) {
+                console.error('Error loading tenants:', error);
+                showError('加载住户数据失败: ' + error.message);
+                
+                // 显示错误状态
+                const tbody = document.getElementById('tenantsTableBody');
+                if (tbody) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="8" style="text-align: center; padding: 2rem;">
+                                <div style="color: var(--danger-color); font-size: 2rem;">⚠️</div>
+                                <h3>数据加载失败</h3>
+                                <p>${error.message}</p>
+                                <button onclick="loadTenants()" style="margin-top: 1rem;" class="btn">重试</button>
+                            </td>
+                        </tr>
+                    `;
+                }
+            }
+        }
+
+        // 渲染表格
+        function renderTable() {
+            const tbody = document.getElementById('tenantsTableBody');
+            
+            if (tenantsData.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="8" style="text-align: center; padding: 2rem;">
+                            暂无住户数据<br>
+                            <small>请点击"添加住户"按钮开始添加</small>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            const rowsHTML = tenantsData.map(tenant => {
+                const createdDate = new Date(tenant.created_at).toLocaleDateString('zh-CN');
+                const isActive = tenant.is_active === 1;
+                
+                return `
+                    <tr data-tenant-id="${tenant.id}">
+                        <td class="room-cell">${tenant.room_number}</td>
+                        <td>${tenant.tenant_name || '-'}</td>
+                        <td style="font-size: 0.875rem;">${tenant.room_code || '-'}</td>
+                        <td>¥${formatNumber(tenant.deposit || 0)}</td>
+                        <td>¥${formatNumber(tenant.rent_amount || 0)}</td>
+                        <td>
+                            <span style="color: ${isActive ? 'var(--success-color)' : 'var(--danger-color)'};">
+                                ${isActive ? '🟢 在住' : '🔴 已退租'}
+                            </span>
+                        </td>
+                        <td style="font-size: 0.875rem;">${createdDate}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn btn-sm" onclick="editTenant(${tenant.id})">编辑</button>
+                                <button class="btn btn-sm ${isActive ? 'btn-danger' : 'btn-warning'}" 
+                                        onclick="toggleTenantStatus(${tenant.id})">
+                                    ${isActive ? '退租' : '恢复'}
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+
+            tbody.innerHTML = rowsHTML;
+        }
+
+        // 更新统计信息
+        function updateStatistics() {
+            const activeTenants = tenantsData.filter(t => t.is_active === 1);
+            const totalTenants = tenantsData.length;
+            const activeCount = activeTenants.length;
+            
+            const totalDeposit = activeTenants.reduce((sum, t) => sum + (t.deposit || 0), 0);
+            const totalRent = activeTenants.reduce((sum, t) => sum + (t.rent_amount || 0), 0);
+            const avgRent = activeCount > 0 ? totalRent / activeCount : 0;
+            const vacancyRate = totalTenants > 0 ? ((totalTenants - activeCount) / totalTenants * 100) : 0;
+            
+            document.getElementById('totalTenants').textContent = activeCount;
+            document.getElementById('totalDeposit').textContent = '¥' + formatNumber(totalDeposit);
+            document.getElementById('totalRent').textContent = '¥' + formatNumber(totalRent);
+            document.getElementById('avgRent').textContent = '¥' + formatNumber(avgRent);
+            document.getElementById('vacancyRate').textContent = vacancyRate.toFixed(1) + '%';
+            document.getElementById('monthlyIncome').textContent = '¥' + formatNumber(totalRent);
+        }
+
+        // 显示添加住户模态框
+        function showAddTenantModal() {
+            currentEditingId = null;
+            document.getElementById('modalTitle').textContent = '➕ 添加新住户';
+            document.getElementById('submitBtn').textContent = '添加住户';
+            document.getElementById('tenantForm').reset();
+            document.getElementById('tenantModal').classList.add('active');
+        }
+
+        // 隐藏住户模态框
+        function hideTenantModal() {
+            document.getElementById('tenantModal').classList.remove('active');
+            document.getElementById('tenantForm').reset();
+            currentEditingId = null;
+        }
+
+        // 编辑住户
+        function editTenant(id) {
+            const tenant = tenantsData.find(t => t.id === id);
+            if (!tenant) return;
+            
+            currentEditingId = id;
+            document.getElementById('modalTitle').textContent = '✏️ 编辑住户信息';
+            document.getElementById('submitBtn').textContent = '保存修改';
+            
+            document.getElementById('roomNumber').value = tenant.room_number;
+            document.getElementById('tenantName').value = tenant.tenant_name;
+            document.getElementById('roomCode').value = tenant.room_code || '';
+            document.getElementById('deposit').value = tenant.deposit || '';
+            document.getElementById('rentAmount').value = tenant.rent_amount || '';
+            
+            document.getElementById('tenantModal').classList.add('active');
+        }
+
+        // 处理住户表单提交
+        async function handleTenantSubmit(event) {
+            event.preventDefault();
+            
+            const formData = {
+                room_number: document.getElementById('roomNumber').value.trim(),
+                tenant_name: document.getElementById('tenantName').value.trim(),
+                room_code: document.getElementById('roomCode').value.trim(),
+                deposit: parseFloat(document.getElementById('deposit').value) || 0,
+                rent_amount: parseFloat(document.getElementById('rentAmount').value) || 0
+            };
+            
+            try {
+                const url = currentEditingId 
+                    ? `/api/tenants/${currentEditingId}`
+                    : '/api/tenants';
+                    
+                const method = currentEditingId ? 'PUT' : 'POST';
+                
+                const response = await fetch(url, {
+                    method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+                
+                if (!response.ok) throw new Error('操作失败');
+                
+                hideTenantModal();
+                await loadTenants();
+                showSuccess(currentEditingId ? '住户信息更新成功' : '住户添加成功');
+            } catch (error) {
+                console.error('Error saving tenant:', error);
+                showError('保存失败');
+            }
+        }
+
+        // 切换住户状态
+        async function toggleTenantStatus(id) {
+            const tenant = tenantsData.find(t => t.id === id);
+            if (!tenant) return;
+            
+            const newStatus = tenant.is_active === 1 ? 0 : 1;
+            const action = newStatus === 1 ? '恢复' : '退租';
+            
+            if (!confirm(`确定要${action}住户 "${tenant.tenant_name}" 吗？`)) return;
+            
+            try {
+                const response = await fetch(`/api/tenants/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ ...tenant, is_active: newStatus })
+                });
+                
+                if (!response.ok) throw new Error('操作失败');
+                
+                await loadTenants();
+                showSuccess(`住户${action}成功`);
+            } catch (error) {
+                console.error('Error updating tenant status:', error);
+                showError('操作失败');
+            }
+        }
+
+        // 导出住户数据
+        function exportTenantsData() {
+            let csv = '房号,住户姓名,房屋编码,押金,月租,状态,创建时间\n';
+            
+            tenantsData.forEach(tenant => {
+                const status = tenant.is_active === 1 ? '在住' : '已退租';
+                const createdDate = new Date(tenant.created_at).toLocaleDateString('zh-CN');
+                
+                csv += `${tenant.room_number},${tenant.tenant_name},${tenant.room_code || ''},${tenant.deposit || 0},${tenant.rent_amount || 0},${status},${createdDate}\n`;
+            });
+
+            const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `住户信息_${new Date().toLocaleDateString('zh-CN')}.csv`;
+            link.click();
+        }
+
+        // 备份数据
+        function backupData() {
+            alert('📋 数据备份功能开发中...\n可以联系管理员进行数据库备份');
+        }
+
+        // 格式化数字
+        function formatNumber(num) {
+            return parseFloat(num || 0).toLocaleString('zh-CN', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+        }
+
+        // 显示错误信息
+        function showError(message) {
+            alert('❌ ' + message);
+        }
+
+        // 显示成功信息
+        function showSuccess(message) {
+            alert('✅ ' + message);
+        }
+
+        // 点击模态框外部关闭
+        document.getElementById('tenantModal').addEventListener('click', (e) => {
+            if (e.target.id === 'tenantModal') {
+                hideTenantModal();
+            }
+        });
+    </script>
+</body>
+</html>

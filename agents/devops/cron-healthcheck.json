@@ -1,0 +1,9 @@
+{
+  "name": "DevOps Daily Health Check",
+  "schedule": "0 8 * * *",
+  "task": "执行 Docker 容器健康检查：docker ps -a, docker stats --no-stream, df -h",
+  "agentId": "devops",
+  "delivery": {
+    "target": "main"
+  }
+}

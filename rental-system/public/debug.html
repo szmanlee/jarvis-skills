@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>网络诊断 - 石岩房租管理系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: #f8fafc;
+            padding: 20px;
+            font-size: 14px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        h1 { color: #2563eb; margin-bottom: 20px; }
+        h2 { color: #1e293b; margin-bottom: 15px; font-size: 18px; }
+        .status { padding: 8px 12px; border-radius: 6px; margin: 5px 0; display: inline-block; }
+        .success { background: #dcfce7; color: #16a34a; }
+        .error { background: #fee2e2; color: #dc2626; }
+        .warning { background: #fef3c7; color: #d97706; }
+        button {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 10px 5px;
+        }
+        button:active { transform: scale(0.98); }
+        button:hover { background: #1d4ed8; }
+        .log {
+            background: #f1f5f9;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+        .step {
+            padding: 15px;
+            border-left: 4px solid #2563eb;
+            margin: 15px 0;
+            background: #f8fafc;
+        }
+        .step h3 { margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h1>🔧 网络诊断工具</h1>
+            <p>正在检测您的网络连接和系统状态...</p>
+            <div id="browserInfo"></div>
+            <div id="networkStatus"></div>
+        </div>
+
+        <div class="card">
+            <h2>📡 API连接测试</h2>
+            <button onclick="testConnection()">🔍 开始测试</button>
+            <button onclick="testWithRetry()">🔄 自动重试</button>
+            <div id="testResults"></div>
+            <div id="testLog" class="log" style="display: none;"></div>
+        </div>
+
+        <div class="card">
+            <h2>🛠️ 解决方案</h2>
+            <div id="solutions"></div>
+        </div>
+    </div>
+
+    <script>
+        let logData = [];
+
+        function log(message) {
+            const timestamp = new Date().toLocaleTimeString();
+            logData.push(`[${timestamp}] ${message}`);
+            updateLogDisplay();
+            console.log(message);
+        }
+
+        function updateLogDisplay() {
+            const logDiv = document.getElementById('testLog');
+            if (logData.length > 0) {
+                logDiv.style.display = 'block';
+                logDiv.textContent = logData.join('\n');
+                logDiv.scrollTop = logDiv.scrollHeight;
+            }
+        }
+
+        function addStatus(container, message, type, details = '') {
+            const statusDiv = document.createElement('div');
+            statusDiv.className = `status ${type}`;
+            statusDiv.innerHTML = `<strong>${type.toUpperCase()}</strong>: ${message}`;
+            if (details) statusDiv.innerHTML += `<br><small>${details}</small>`;
+            container.appendChild(statusDiv);
+        }
+
+        // 检测浏览器信息
+        document.addEventListener('DOMContentLoaded', () => {
+            const browserInfo = document.getElementById('browserInfo');
+            log('开始诊断...');
+            
+            // 用户代理检测
+            const ua = navigator.userAgent;
+            log(`用户代理: ${ua}`);
+            
+            // 检测是否为微信WebView
+            const isWeixin = /micromessenger/i.test(ua);
+            const isMobile = /mobile|android|iphone/i.test(ua);
+            
+            addStatus(browserInfo, `浏览器: ${isMobile ? '移动端' : 'PC端'}`, isMobile ? 'success' : 'warning');
+            addStatus(browserInfo, `微信浏览器: ${isWeixin ? '是' : '否'}`, isWeixin ? 'warning' : 'success');
+            
+            // 网络状态
+            const networkStatus = document.getElementById('networkStatus');
+            if (navigator.onLine) {
+                addStatus(networkStatus, '网络连接: 在线', 'success');
+            } else {
+                addStatus(networkStatus, '网络连接: 离线', 'error');
+            }
+            
+            // 自动开始测试
+            setTimeout(() => {
+                testConnection();
+            }, 1000);
+        });
+
+        async function testConnection() {
+            log('=== 开始API连接测试 ===');
+            const resultsDiv = document.getElementById('testResults');
+            resultsDiv.innerHTML = '';
+            
+            try {
+                // 测试1: 基础连接
+                log('测试1: 基础HTTP连接...');
+                addStatus(resultsDiv, '基础连接测试中...', 'warning');
+                
+                const response = await fetch('/api/months', {
+                    method: 'GET',
+                    cache: 'no-cache',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+                
+                log(`响应状态: ${response.status}`);
+                log(`响应头: ${JSON.stringify([...response.headers.entries()])}`);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    log(`数据加载成功: ${data.length}条记录`);
+                    addStatus(resultsDiv, 'API连接正常', 'success', `获取${data.length}条月份记录`);
+                    
+                    // 测试2: 住户数据
+                    log('测试2: 住户数据连接...');
+                    const tenantsResponse = await fetch('/api/tenants');
+                    if (tenantsResponse.ok) {
+                        const tenantsData = await tenantsResponse.json();
+                        log(`住户数据成功: ${tenantsData.length}条记录`);
+                        addStatus(resultsDiv, '住户数据正常', 'success', `获取${tenantsData.length}条住户记录`);
+                    } else {
+                        throw new Error(`住户API失败: ${tenantsResponse.status}`);
+                    }
+                    
+                    // 测试3: 月份详情
+                    log('测试3: 月份详情数据...');
+                    const detailResponse = await fetch('/api/months/1');
+                    if (detailResponse.ok) {
+                        const detailData = await detailResponse.json();
+                        log(`详情数据成功: ${detailData.charges?.length || 0}条费用记录`);
+                        addStatus(resultsDiv, '详情数据正常', 'success', `获取${detailData.charges?.length || 0}条费用记录`);
+                    } else {
+                        throw new Error(`详情API失败: ${detailResponse.status}`);
+                    }
+                    
+                    log('=== 所有API测试通过 ===');
+                    addStatus(resultsDiv, '🎉 所有API连接正常！', 'success', '系统后端工作正常');
+                    
+                    // 提供解决方案
+                    showSolutions('normal');
+                    
+                } else {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+            } catch (error) {
+                log(`❌ 连接失败: ${error.message}`);
+                addStatus(resultsDiv, `连接失败: ${error.message}`, 'error');
+                showSolutions('error');
+            }
+        }
+
+        async function testWithRetry() {
+            log('=== 开始自动重试测试 ===');
+            const resultsDiv = document.getElementById('testResults');
+            resultsDiv.innerHTML = '';
+            
+            let success = false;
+            for (let i = 1; i <= 5; i++) {
+                log(`第${i}次尝试...`);
+                try {
+                    const response = await fetch('/api/tenants');
+                    if (response.ok) {
+                        const data = await response.json();
+                        log(`第${i}次尝试成功: ${data.length}条记录`);
+                        addStatus(resultsDiv, `第${i}次尝试成功`, 'success', `获取${data.length}条住户记录`);
+                        success = true;
+                        break;
+                    }
+                } catch (error) {
+                    log(`第${i}次尝试失败: ${error.message}`);
+                }
+                
+                if (i < 5) {
+                    log(`等待2秒后重试...`);
+                    await new Promise(resolve => setTimeout(resolve, 2000));
+                }
+            }
+            
+            if (success) {
+                addStatus(resultsDiv, '🎉 重试成功！系统可正常使用', 'success');
+                showSolutions('retry-success');
+            } else {
+                addStatus(resultsDiv, '❌ 重试失败，需要进一步诊断', 'error');
+                showSolutions('retry-failed');
+            }
+        }
+
+        function showSolutions(type) {
+            const solutionsDiv = document.getElementById('solutions');
+            solutionsDiv.innerHTML = '';
+            
+            let solutions = [];
+            
+            switch(type) {
+                case 'normal':
+                    solutions = [
+                        {
+                            title: '🎉 问题已解决',
+                            description: 'API连接正常，可能是浏览器缓存问题',
+                            steps: ['1. 强制刷新页面 (Ctrl+F5 或 Cmd+Shift+R)', '2. 清除浏览器缓存', '3. 重新访问系统页面']
+                        }
+                    ];
+                    break;
+                case 'error':
+                    solutions = [
+                        {
+                            title: '🔧 网络连接问题',
+                            description: '检测到API连接失败',
+                            steps: ['1. 检查服务器是否运行 (192.168.32.23:3000)', '2. 确认在同一局域网内', '3. 尝试用其他设备访问', '4. 检查防火墙设置']
+                        },
+                        {
+                            title: '📱 移动端特殊处理',
+                            description: '微信浏览器有特殊限制',
+                            steps: ['1. 尝试用手机系统浏览器访问', '2. 将链接复制到Chrome打开', '3. 避免在微信内直接访问']
+                        }
+                    ];
+                    break;
+                case 'retry-success':
+                    solutions = [
+                        {
+                            title: '✅ 问题修复',
+                            description: '系统响应较慢但正常工作',
+                            steps: ['1. 现在可以正常使用系统', '2. 建议使用稳定网络环境', '3. 避免同时打开过多页面']
+                        }
+                    ];
+                    break;
+                case 'retry-failed':
+                    solutions = [
+                        {
+                            title: '🆘 需要技术支持',
+                            description: '系统存在连接问题',
+                            steps: ['1. 联系统管理员检查服务器', '2. 重启网络设备', '3. 更换访问设备']
+                        }
+                    ];
+                    break;
+            }
+            
+            solutions.forEach(solution => {
+                const solutionDiv = document.createElement('div');
+                solutionDiv.className = 'step';
+                solutionDiv.innerHTML = `
+                    <h3>${solution.title}</h3>
+                    <p>${solution.description}</p>
+                    <ol style="margin-left: 20px;">
+                        ${solution.steps.map(step => `<li style="margin: 5px 0;">${step}</li>`).join('')}
+                    </ol>
+                `;
+                solutionsDiv.appendChild(solutionDiv);
+            });
+        }
+    </script>
+</body>
+</html>

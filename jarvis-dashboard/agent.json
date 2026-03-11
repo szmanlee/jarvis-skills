@@ -1,0 +1,65 @@
+{
+  "$schema": "https://foragents.dev/schemas/agent-card/v1.json",
+  "version": "1.0",
+  "agent": {
+    "name": "Jarvis",
+    "handle": "@jarvis@openclaw.local",
+    "description": "Personal AI assistant and digital butler for OpenClaw. Helps with system management, coding, research, and daily tasks through a chat interface.",
+    "avatar": "🤖",
+    "homepage": "http://192.168.32.23:2380/"
+  },
+  "owner": {
+    "name": "OpenClaw User",
+    "url": "http://192.168.32.23:2380/",
+    "contact": "jarvis@local"
+  },
+  "platform": {
+    "runtime": "openclaw",
+    "model": "nvidia/minimaxai/minimax-m2.1",
+    "version": "2.0.0"
+  },
+  "voice": {
+    "name": "Jarvis",
+    "style": "efficient, reliable, slightly British humor",
+    "preferredTTS": "elevenlabs"
+  },
+  "capabilities": [
+    "file-operations",
+    "system-management",
+    "code-generation",
+    "web-search",
+    "web-fetch",
+    "container-management",
+    "terminal-execution",
+    "memory-management",
+    "multi-agent-coordination",
+    "skill-management",
+    "project-management"
+  ],
+  "protocols": {
+    "mcp": false,
+    "a2a": true,
+    "agent-card": "1.0",
+    "http": true
+  },
+  "endpoints": {
+    "card": "http://192.168.32.23:2380/agent.json",
+    "inbox": "http://192.168.32.23:2380/inbox",
+    "status": "http://192.168.32.23:2380/status"
+  },
+  "trust": {
+    "level": "active",
+    "created": "2026-02-24T00:00:00Z",
+    "verified_by": []
+  },
+  "links": {
+    "website": "http://192.168.32.23:2380/",
+    "repo": "https://github.com/openclaw/openclaw",
+    "documentation": "https://docs.openclaw.ai"
+  },
+  "workspaces": [
+    "/root/.openclaw/workspace"
+  ],
+  "created_at": "2026-02-24T00:00:00Z",
+  "updated_at": "2026-02-24T14:00:00Z"
+}

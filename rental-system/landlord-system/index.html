@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>石岩31栋收租管理系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .login-container {
+            background: white;
+            padding: 3rem 2rem;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 2rem;
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #555;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 0.8rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .error-message {
+            color: #e74c3c;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        .system-info {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid #e1e5e9;
+            color: #777;
+            font-size: 0.8rem;
+        }
+
+        /* 动画效果 */
+        .login-container {
+            animation: slideUp 0.5s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo">🏢</div>
+        <h1>石岩31栋收租管理系统</h1>
+        
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="username">用户名</label>
+                <input type="text" id="username" name="username" required placeholder="请输入用户名">
+            </div>
+            
+            <div class="form-group">
+                <label for="password">密码</label>
+                <input type="password" id="password" name="password" required placeholder="请输入密码">
+            </div>
+            
+            <button type="submit" class="login-btn">登录系统</button>
+            
+            <div id="errorMessage" class="error-message">
+                用户名或密码错误，请重试
+            </div>
+        </form>
+        
+        <div class="system-info">
+            <p>👤 管理员账号：admin</p>
+            <p>🔑 默认密码：admin123</p>
+            <p>🏠 19户固定结构 · 本地运行</p>
+            <p>🏢 石岩31栋专属系统</p>
+        </div>
+    </div>
+
+    <script>
+        // 默认登录凭据（可在代码中修改）
+        const DEFAULT_USERNAME = 'admin';
+        const DEFAULT_PASSWORD = 'admin123';
+
+        // 登录表单处理
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+            const errorDiv = document.getElementById('errorMessage');
+            
+            // 验证登录凭据
+            if (username === DEFAULT_USERNAME && password === DEFAULT_PASSWORD) {
+                // 登录成功，保存登录状态
+                sessionStorage.setItem('isLoggedIn', 'true');
+                sessionStorage.setItem('loginTime', new Date().getTime());
+                
+                // 跳转到管理页面
+                window.location.href = 'management.html';
+            } else {
+                // 登录失败，显示错误信息
+                errorDiv.style.display = 'block';
+                
+                // 清空密码框
+                document.getElementById('password').value = '';
+                
+                // 摇动效果
+                document.querySelector('.login-container').style.animation = 'shake 0.5s';
+                setTimeout(() => {
+                    document.querySelector('.login-container').style.animation = '';
+                }, 500);
+            }
+        });
+
+        // 添加摇动动画
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                25% { transform: translateX(-10px); }
+                75% { transform: translateX(10px); }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // 检查是否已登录
+        window.addEventListener('load', function() {
+            const isLoggedIn = sessionStorage.getItem('isLoggedIn');
+            const loginTime = sessionStorage.getItem('loginTime');
+            
+            // 如果已登录且在2小时内，直接跳转到管理页面
+            if (isLoggedIn === 'true' && loginTime) {
+                const now = new Date().getTime();
+                const timeDiff = now - parseInt(loginTime);
+                const twoHours = 2 * 60 * 60 * 1000;
+                
+                if (timeDiff < twoHours) {
+                    window.location.href = 'management.html';
+                    return;
+                } else {
+                    // 登录过期，清除登录状态
+                    sessionStorage.removeItem('isLoggedIn');
+                    sessionStorage.removeItem('loginTime');
+                }
+            }
+        });
+
+        // 自动聚焦到用户名输入框
+        window.addEventListener('load', function() {
+            document.getElementById('username').focus();
+        });
+    </script>
+</body>
+</html>

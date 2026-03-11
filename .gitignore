@@ -1,0 +1,48 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+build/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Large files (> 100MB) - use Git LFS
+*.tar.gz
+*.zip
+*.img
+*.iso
+
+# Temporary files
+*.tmp
+*.bak
+*~
+.#*
+
+# OpenClaw specific
+.openclaw/config.json
+.openclaw/secrets/
+.memory/
+
+# Agent workspaces (optional - individual agent repos)
+agents/*/memory/
+agents/*/.openclaw/

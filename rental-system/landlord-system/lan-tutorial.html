@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>局域网浏览详细教程</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f5f7fa;
+            line-height: 1.6;
+        }
+        .card {
+            background: white;
+            padding: 25px;
+            margin: 15px 0;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .important { border-left: 5px solid #dc3545; background: #f8d7da; }
+        .success { border-left: 5px solid #28a745; background: #d4edda; }
+        .info { border-left: 5px solid #17a2b8; background: #d1ecf1; }
+        .step {
+            background: #f8f9fa;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+            border-left: 4px solid #007bff;
+        }
+        .step h3 {
+            margin-top: 0;
+            color: #007bff;
+        }
+        .ip-display {
+            font-size: 28px;
+            font-weight: bold;
+            color: #007bff;
+            background: #e3f2fd;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .device-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .device-card {
+            background: #e8f4fd;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            border: 2px solid #bee5eb;
+            transition: transform 0.2s;
+        }
+        .device-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .device-icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+        .btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+            text-decoration: none;
+            display: inline-block;
+            transition: background 0.3s;
+        }
+        .btn:hover { background: #0056b3; }
+        .btn-success { background: #28a745; }
+        .btn-success:hover { background: #218838; }
+        .code {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: monospace;
+            border: 1px solid #dee2e6;
+            font-size: 16px;
+            margin: 10px 0;
+        }
+        .highlight {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #ffc107;
+            margin: 15px 0;
+        }
+        .number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 30px;
+            height: 30px;
+            background: #007bff;
+            color: white;
+            border-radius: 50%;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>📱 局域网浏览详细教程</h1>
+    
+    <div class="ip-display">
+        🌐 你的局域网访问地址：<br>
+        <span style="font-size: 32px;">http://192.168.32.23:8082</span>
+    </div>
+
+    <div class="card important">
+        <h2>🚨 前提条件检查</h2>
+        <p>在开始之前，请确认以下条件：</p>
+        <ul>
+            <li>✅ 所有设备连接到<strong>同一个WiFi网络</strong></li>
+            <li>✅ 服务器已启动（显示"Process still running"）</li>
+            <li>✅ Windows防火墙已允许Python通过</li>
+            <li>✅ 没有VPN或代理影响网络连接</li>
+        </ul>
+    </div>
+
+    <div class="step">
+        <h3><span class="number">1</span> 准备你的手机</h3>
+        <div class="device-grid">
+            <div class="device-card">
+                <div class="device-icon">📱</div>
+                <h4>Android手机</h4>
+                <p>连接到与电脑相同的WiFi</p>
+                <p>建议使用Chrome浏览器</p>
+            </div>
+            <div class="device-card">
+                <div class="device-icon">🍎</div>
+                <h4>iPhone/iPad</h4>
+                <p>连接到与电脑相同的WiFi</p>
+                <p>建议使用Safari浏览器</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="step">
+        <h3><span class="number">2</span> 打开手机浏览器</h3>
+        <h4>Android手机：</h4>
+        <ul>
+            <li>打开【Chrome】浏览器</li>
+            <li>点击地址栏</li>
+            <li>输入：<code>http://192.168.32.23:8082</code></li>
+            <li>点击"前往"或"Enter"</li>
+        </ul>
+        
+        <h4 style="margin-top: 20px;">iPhone/iPad：</h4>
+        <ul>
+            <li>打开【Safari】浏览器</li>
+            <li>点击地址栏</li>
+            <li>输入：<code>http://192.168.32.23:8082</code></li>
+            <li>点击"前往"</li>
+        </ul>
+    </div>
+
+    <div class="step">
+        <h3><span class="number">3</span> 登录系统</h3>
+        <div class="highlight">
+            <h4>🔑 登录信息：</h4>
+            <p><strong>用户名：</strong> <code style="font-size: 18px;">admin</code></p>
+            <p><strong>密　码：</strong> <code style="font-size: 18px;">admin123</code></p>
+        </div>
+        
+        <p>在打开的登录页面中：</p>
+        <ol>
+            <li>在"用户名"框输入：<code>admin</code></li>
+            <li>在"密码"框输入：<code>admin123</code></li>
+            <li>点击"登录系统"按钮</li>
+            <li>成功登录后即可看到管理系统</li>
+        </ol>
+    </div>
+
+    <div class="card success">
+        <h2>🎉 成功后你将看到</h2>
+        <ul>
+            <li>✅ 房东收租管理系统主界面</li>
+            <li>✅ 按楼层显示的19个房间</li>
+            <li>✅ 统计信息（总房间数、已租户数等）</li>
+            <li>✅ 完整的租客信息管理功能</li>
+            <li>✅ 水电费计算和缴费状态</li>
+        </ul>
+    </div>
+
+    <div class="card info">
+        <h2>📷 获取地址的简便方法</h2>
+        
+        <div class="step">
+            <h4>方法1：二维码扫描（推荐）</h4>
+            <ol>
+                <li>在手机上安装二维码扫描应用</li>
+                <li>使用在线工具生成二维码：<br>
+                    <a href="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=http://192.168.32.23:8082" target="_blank" class="btn">生成二维码</a>
+                </li>
+                <li>用手机扫描二维码自动打开网址</li>
+            </ol>
+        </div>
+        
+        <div class="step">
+            <h4>方法2：WiFi分享</h4>
+            <ol>
+                <li>在微信中创建群聊（只有自己）</li>
+                <li>发送消息：<code style="background: white; padding: 5px; border-radius: 3px;">http://192.168.32.23:8082</code></li>
+                <li>在手机上打开该消息，点击链接</li>
+            </ol>
+        </div>
+        
+        <div class="step">
+            <h4>方法3：浏览器同步</h4>
+            <ol>
+                <li>在电脑浏览器中访问：<code>http://192.168.32.23:8082</code></li>
+                <li>使用浏览器"分享到手机"功能</li>
+                <li>或者发送到微信/QQ，手机端打开</li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="card important">
+        <h2>❌ 常见问题解决</h2>
+        
+        <div class="step">
+            <h4>问题1：无法访问或页面加载失败</h4>
+            <p><strong>解决方法：</strong></p>
+            <ul>
+                <li>检查手机是否连接到正确的WiFi</li>
+                <li>确认IP地址输入正确：192.168.32.23:8082</li>
+                <li>检查电脑防火墙设置（暂时关闭测试）</li>
+                <li>确保服务器仍在运行（终端无错误）</li>
+            </ul>
+        </div>
+        
+        <div class="step">
+            <h4>问题2：显示"无法连接到此网站"</h4>
+            <p><strong>解决方法：</strong></p>
+            <ul>
+                <li>确认没有开启VPN或代理</li>
+                <li>尝试在手机浏览器中开启"桌面版网站"</li>
+                <li>检查WiFi是否需要特殊认证</li>
+                <li>重启手机浏览器应用</li>
+            </ul>
+        </div>
+        
+        <div class="step">
+            <h4>问题3：登录失败</h4>
+            <p><strong>解决方法：</strong></p>
+            <ul>
+                <li>确认用户名和密码：admin / admin123</li>
+                <li>检查键盘大小写锁定</li>
+                <li>清除浏览器缓存后重试</li>
+                <li>确认不是访问了错误的地址</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>🎯 测试建议</h2>
+        <ol>
+            <li><strong>先在电脑测试：</strong> 访问 http://localhost:8082 确认系统正常
+            <li><strong>再用手机测试：</strong> 访问 http://192.168.32.23:8082
+            <li><strong>多设备测试：</strong> 尝试用不同手机/平板访问
+            <li><strong>功能测试：</strong> 在手机上编辑房间信息，保存后电脑刷新查看
+        </ol>
+    </div>
+
+    <div style="text-align: center; margin: 30px 0;">
+        <button class="btn btn-success" onclick="copyAddress()">📋 复制地址到剪贴板</button>
+        <button class="btn" onclick="testConnection()">🔗 测试服务器连接</button>
+        <a href="http://192.168.32.23:8082" target="_blank" class="btn btn-success">🚀 立即在电脑上测试</a>
+    </div>
+
+    <script>
+        function copyAddress() {
+            const address = 'http://192.168.32.23:8082';
+            
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(address).then(() => {
+                    alert('✅ 地址已复制到剪贴板！\n' + address + '\n\n现在可以在手机浏览器中粘贴访问。');
+                });
+            } else {
+                prompt('请复制以下地址到手机浏览器：', address);
+            }
+        }
+
+        function testConnection() {
+            const address = 'http://192.168.32.23:8082';
+            
+            fetch(address)
+                .then(response => {
+                    if (response.ok) {
+                        alert('✅ 服务器连接正常！\\n可以开始在手机上访问了。');
+                    } else {
+                        alert('⚠️ 服务器响应异常，请检查服务器状态。');
+                    }
+                })
+                .catch(error => {
+                    alert('❌ 无法连接到服务器，请检查：\n1. 服务器是否正在运行\n2. 网络连接是否正常\n3. IP地址是否正确');
+                });
+        }
+
+        // 页面加载时检查连接
+        window.addEventListener('load', function() {
+            setTimeout(testConnection, 2000);
+        });
+    </script>
+</body>
+</html>

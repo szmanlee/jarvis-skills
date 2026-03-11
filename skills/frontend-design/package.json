@@ -1,0 +1,10 @@
+{
+  "name": "frontend-design",
+  "version": "1.0.0",
+  "description": "Comprehensive frontend development skill",
+  "main": "index.js",
+  "type": "module",
+  "keywords": ["frontend", "javascript", "css", "html", "react", "vue"],
+  "author": "OpenClaw",
+  "license": "MIT"
+}

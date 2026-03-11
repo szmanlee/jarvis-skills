@@ -1,0 +1,22 @@
+{
+  "name": "jarvis-skills",
+  "version": "1.0.0",
+  "description": "贾维斯 OpenClaw Skills 集合 - 18 个专业技能模块",
+  "main": "index.js",
+  "scripts": {
+    "list": "node scripts/list-skills.js",
+    "install": "node scripts/install-skill.js"
+  },
+  "keywords": [
+    "openclaw",
+    "skills",
+    "jarvis",
+    "automation",
+    "browser",
+    "docker",
+    "devops"
+  ],
+  "author": "Jarvis",
+  "license": "MIT",
+  "homepage": "https://github.com/szmanlee/jarvis-skills"
+}

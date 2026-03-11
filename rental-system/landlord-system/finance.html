@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>财务管家 - 石岩31栋收租管理系统</title>
+    <link rel="stylesheet" href="management.html" style="display: none;">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: #f5f7fa;
+            line-height: 1.6;
+        }
+
+        /* 引入主页面样式 */
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .back-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background 0.3s;
+        }
+
+        .back-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border-left: 4px solid #007bff;
+            transition: transform 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .stat-card.success {
+            border-left-color: #28a745;
+        }
+
+        .stat-card.warning {
+            border-left-color: #ffc107;
+        }
+
+        .stat-card.danger {
+            border-left-color: #dc3545;
+        }
+
+        .stat-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .stat-change {
+            font-size: 0.8rem;
+            color: #28a745;
+            margin-top: 0.5rem;
+        }
+
+        .chart-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .chart-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 1.5rem;
+        }
+
+        .chart-placeholder {
+            height: 300px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-size: 1.2rem;
+        }
+
+        .expense-table {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: background 0.3s;
+        }
+
+        .btn:hover {
+            background: #0056b3;
+        }
+
+        .btn-success {
+            background: #28a745;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .table th,
+        .table td {
+            padding: 0.8rem;
+            text-align: left;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .table tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .income-cell {
+            color: #28a745;
+            font-weight: 500;
+        }
+
+        .expense-cell {
+            color: #dc3545;
+            font-weight: 500;
+        }
+
+        .prediction-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+        }
+
+        .prediction-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-top: 1.5rem;
+        }
+
+        .prediction-item {
+            text-align: center;
+        }
+
+        .prediction-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .prediction-label {
+            opacity: 0.9;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .prediction-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .table-responsive {
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 头部导航 -->
+    <header>
+        <div class="header-content">
+            <div class="logo">🏢 石岩31栋收租管理系统 - 财务管家</div>
+            <div>
+                <a href="management.html" class="back-btn">← 返回主页面</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- 财务概览 -->
+        <div class="dashboard-grid">
+            <div class="stat-card">
+                <div class="stat-icon">💰</div>
+                <div class="stat-value" id="totalIncome">¥45,670</div>
+                <div class="stat-label">本月总收入</div>
+                <div class="stat-change">↑ 12.5% 较上月</div>
+            </div>
+
+            <div class="stat-card success">
+                <div class="stat-icon">🏠</div>
+                <div class="stat-value" id="rentIncome">¥38,000</div>
+                <div class="stat-label">房租收入</div>
+                <div class="stat-change">↑ 8.3% 较上月</div>
+            </div>
+
+            <div class="stat-card warning">
+                <div class="stat-icon">⚡</div>
+                <div class="stat-value" id="utilityIncome">¥5,870</div>
+                <div class="stat-label">水电费收入</div>
+                <div class="stat-change">↑ 25.1% 较上月</div>
+            </div>
+
+            <div class="stat-card danger">
+                <div class="stat-icon">💼</div>
+                <div class="stat-value" id="managementIncome">¥1,800</div>
+                <div class="stat-label">管理费收入</div>
+                <div class="stat-change">↑ 15.2% 较上月</div>
+            </div>
+        </div>
+
+        <!-- 收益预测 -->
+        <div class="prediction-card">
+            <h2 style="font-size: 1.8rem; margin-bottom: 1rem;">🎯 AI智能预测</h2>
+            <p style="opacity: 0.9;">基于历史数据的智能分析和预测</p>
+            
+            <div class="prediction-grid">
+                <div class="prediction-item">
+                    <div class="prediction-value">¥45,890</div>
+                    <div class="prediction-label">下月预计收入</div>
+                </div>
+                <div class="prediction-item">
+                    <div class="prediction-value">¥550,468</div>
+                    <div class="prediction-label">年度预计收入</div>
+                </div>
+                <div class="prediction-item">
+                    <div class="prediction-value">94.7%</div>
+                    <div class="prediction-label">缴费及时率</div>
+                </div>
+                <div class="prediction-item">
+                    <div class="prediction-value">2.3%</div>
+                    <div class="prediction-label">空置率</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 收入趋势图表 -->
+        <div class="chart-container">
+            <h3 class="chart-title">📈 收入趋势分析</h3>
+            <div class="chart-placeholder">
+                📊 收入趋势图表 (可集成 Chart.js 等图表库)
+            </div>
+        </div>
+
+        <!-- 支出管理 -->
+        <div class="expense-table">
+            <div class="section-header">
+                <h3 class="section-title">💸 支出管理</h3>
+                <button class="btn btn-success" onclick="addExpense()">
+                    ➕ 添加支出
+                </button>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>日期</th>
+                            <th>类别</th>
+                            <th>描述</th>
+                            <th>金额</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="expenseTableBody">
+                        <tr>
+                            <td>2026-03-01</td>
+                            <td>维修</td>
+                            <td>101房空调维修</td>
+                            <td class="expense-cell">-¥280</td>
+                            <td>
+                                <button class="btn" style="padding: 0.3rem 0.8rem; font-size: 0.8rem;">编辑</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>2026-03-05</td>
+                            <td>物业费</td>
+                            <td>3月份管理费</td>
+                            <td class="expense-cell">-¥1,200</td>
+                            <td>
+                                <button class="btn" style="padding: 0.3rem 0.8rem; font-size: 0.8rem;">编辑</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>2026-03-10</td>
+                            <td>公共设施</td>
+                            <td>楼道灯泡更换</td>
+                            <td class="expense-cell">-¥45</td>
+                            <td>
+                                <button class="btn" style="padding: 0.3rem 0.8rem; font-size: 0.8rem;">编辑</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div style="margin-top: 2rem; padding: 1rem; background: #f8f9fa; border-radius: 8px;">
+                <div style="display: flex; justify-content: space-between; font-size: 1.2rem; font-weight: 600;">
+                    <span>总支出：</span>
+                    <span class="expense-cell">¥1,525</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 1.4rem; font-weight: 700; margin-top: 1rem; padding-top: 1rem; border-top: 2px solid #dee2e6;">
+                    <span>净利润：</span>
+                    <span class="income-cell">¥44,145</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 财务数据管理
+        let financeData = {
+            monthlyIncome: 45670,
+            rentIncome: 38000,
+            utilityIncome: 5870,
+            managementIncome: 1800,
+            expenses: [
+                { date: '2026-03-01', category: '维修', description: '101房空调维修', amount: 280 },
+                { date: '2026-03-05', category: '物业费', description: '3月份管理费', amount: 1200 },
+                { date: '2026-03-10', category: '公共设施', description: '楼道灯泡更换', amount: 45 }
+            ]
+        };
+
+        // 从localStorage加载数据
+        function loadFinanceData() {
+            const saved = localStorage.getItem('financeData');
+            if (saved) {
+                financeData = JSON.parse(saved);
+            }
+            updateDisplay();
+        }
+
+        // 保存数据到localStorage
+        function saveFinanceData() {
+            localStorage.setItem('financeData', JSON.stringify(financeData));
+        }
+
+        // 更新显示
+        function updateDisplay() {
+            // 更新统计卡片
+            document.getElementById('totalIncome').textContent = `¥${financeData.monthlyIncome.toLocaleString()}`;
+            document.getElementById('rentIncome').textContent = `¥${financeData.rentIncome.toLocaleString()}`;
+            document.getElementById('utilityIncome').textContent = `¥${financeData.utilityIncome.toLocaleString()}`;
+            document.getElementById('managementIncome').textContent = `¥${financeData.managementIncome.toLocaleString()}`;
+
+            // 更新支出表格
+            updateExpenseTable();
+
+            // 更新净利润
+            const totalExpenses = financeData.expenses.reduce((sum, expense) => sum + expense.amount, 0);
+            const netProfit = financeData.monthlyIncome - totalExpenses;
+            
+            // 这里可以添加净利润显示到页面的逻辑
+        }
+
+        // 更新支出表格
+        function updateExpenseTable() {
+            const tbody = document.getElementById('expenseTableBody');
+            tbody.innerHTML = financeData.expenses.map(expense => `
+                <tr>
+                    <td>${expense.date}</td>
+                    <td>${expense.category}</td>
+                    <td>${expense.description}</td>
+                    <td class="expense-cell">-¥${expense.amount.toLocaleString()}</td>
+                    <td>
+                        <button class="btn" style="padding: 0.3rem 0.8rem; font-size: 0.8rem;" onclick="editExpense('${expense.date}')">编辑</button>
+                        <button class="btn" style="padding: 0.3rem 0.8rem; font-size: 0.8rem; background: #dc3545;" onclick="deleteExpense('${expense.date}')">删除</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // 添加支出
+        function addExpense() {
+            const date = prompt('请输入日期 (YYYY-MM-DD):', new Date().toISOString().split('T')[0]);
+            if (!date) return;
+
+            const category = prompt('请输入类别:', '');
+            if (!category) return;
+
+            const description = prompt('请输入描述:', '');
+            if (!description) return;
+
+            const amount = prompt('请输入金额:', '0');
+            if (!amount || isNaN(amount)) return;
+
+            financeData.expenses.push({
+                date: date,
+                category: category,
+                description: description,
+                amount: parseFloat(amount)
+            });
+
+            saveFinanceData();
+            updateDisplay();
+            alert('✅ 支出记录已添加！');
+        }
+
+        // 删除支出
+        function deleteExpense(date) {
+            if (confirm('确定要删除这条支出记录吗？')) {
+                financeData.expenses = financeData.expenses.filter(expense => expense.date !== date);
+                saveFinanceData();
+                updateDisplay();
+                alert('✅ 支出记录已删除！');
+            }
+        }
+
+        // 编辑支出
+        function editExpense(date) {
+            const expense = financeData.expenses.find(e => e.date === date);
+            if (!expense) return;
+
+            const newAmount = prompt('请输入新的金额:', expense.amount);
+            if (newAmount && !isNaN(newAmount)) {
+                expense.amount = parseFloat(newAmount);
+                saveFinanceData();
+                updateDisplay();
+                alert('✅ 支出记录已更新！');
+            }
+        }
+
+        // 页面加载时初始化
+        window.addEventListener('load', function() {
+            loadFinanceData();
+        });
+
+        // 从主页面同步数据
+        function syncDataFromMainPage() {
+            // 获取主页面的房间数据
+            const roomsData = JSON.parse(localStorage.getItem('rentalData') || '{}');
+            
+            // 计算各项收入
+            let totalRent = 0;
+            let totalManagement = 0;
+            let totalUtilities = 0;
+
+            Object.values(roomsData).forEach(room => {
+                if (room.tenantName) {
+                    totalRent += room.rent || 0;
+                    totalManagement += room.managementFee || 50;
+                    totalUtilities += (room.currentElectricMeter - room.lastElectricMeter) * (room.electricRate || 1.2);
+                    totalUtilities += (room.currentWaterMeter - room.lastWaterMeter) * (room.waterRate || 3.5);
+                }
+            });
+
+            financeData.rentIncome = totalRent;
+            financeData.managementIncome = totalManagement;
+            financeData.utilityIncome = totalUtilities;
+            financeData.monthlyIncome = totalRent + totalManagement + totalUtilities;
+
+            saveFinanceData();
+            updateDisplay();
+        }
+
+        // 定期同步数据
+        setInterval(syncDataFromMainPage, 30000); // 每30秒同步一次
+    </script>
+</body>
+</html>

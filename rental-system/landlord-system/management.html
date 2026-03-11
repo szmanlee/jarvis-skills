@@ -1,0 +1,1109 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>石岩31栋收租管理系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: #f5f7fa;
+            line-height: 1.6;
+        }
+
+        /* 头部导航 */
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logout-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        /* 统计卡片 */
+        .stats-container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border-left: 4px solid #667eea;
+        }
+
+        .stat-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        /* 统一上传区域 */
+        .unified-upload-section {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .upload-header {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .upload-header h2 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .upload-btn-large {
+            background: white;
+            border: 3px dashed #28a745;
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: #28a745;
+        }
+
+        .upload-btn-large:hover {
+            background: #f8fff9;
+            border-color: #20c997;
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        /* OCR结果显示 */
+        .ocr-results-panel {
+            background: #e8f5e8;
+            border: 1px solid #28a745;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            display: none;
+        }
+
+        .ocr-results-panel.active {
+            display: block;
+        }
+
+        .ocr-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #155724;
+            margin-bottom: 1rem;
+        }
+
+        .ocr-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .ocr-room-result {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid #d4edda;
+        }
+
+        .ocr-room-title {
+            font-weight: 600;
+            color: #155724;
+            margin-bottom: 0.5rem;
+        }
+
+        /* 房间列表 */
+        .rooms-container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .floor-grid {
+            margin-bottom: 2rem;
+        }
+
+        .floor-title {
+            background: #667eea;
+            color: white;
+            padding: 0.8rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .rooms-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .room-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+            position: relative;
+        }
+
+        .room-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .room-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .room-number {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .payment-status {
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .status-paid {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-unpaid {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .room-info {
+            margin-bottom: 1rem;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .info-label {
+            color: #666;
+        }
+
+        .info-value {
+            font-weight: 500;
+            color: #333;
+        }
+
+        .meters-section {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .meters-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #555;
+        }
+
+        .meter-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .meter-input {
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .btn {
+            padding: 0.6rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5a67d8;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+        }
+
+        /* 合同到期提醒 */
+        .contract-expiry {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #ff6b6b;
+            color: white;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        /* 模态框 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.3rem;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.6rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+
+        .highlight-success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 0.75rem;
+            border-radius: 6px;
+            margin: 1rem 0;
+            font-size: 0.9rem;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .stats-container {
+                padding: 0 1rem;
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .rooms-container,
+            .unified-upload-section {
+                padding: 0 1rem;
+            }
+
+            .rooms-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .ocr-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .action-buttons {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 头部导航 -->
+    <header>
+        <div class="header-content">
+            <div class="logo">🏢 石岩31栋收租管理系统</div>
+            <div class="user-info">
+                <a href="finance.html" class="logout-btn" style="margin-right: 10px;">💰 财务管家</a>
+                <a href="reminder.html" class="logout-btn" style="margin-right: 10px;">📢 智能催收</a>
+                <button class="logout-btn" onclick="logout()">退出登录</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- 统计信息 -->
+    <section class="stats-container">
+        <div class="stat-card">
+            <div class="stat-icon">🏠</div>
+            <div class="stat-value" id="totalRooms">19</div>
+            <div class="stat-label">总房间数</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">👥</div>
+            <div class="stat-value" id="occupiedRooms">15</div>
+            <div class="stat-label">已租房间</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">💰</div>
+            <div class="stat-value" id="totalRent">¥25,650</div>
+            <div class="stat-label">月租总收入</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">✅</div>
+            <div class="stat-value" id="paidCount">12</div>
+            <div class="stat-label">已缴费</div>
+        </div>
+    </section>
+
+    <!-- 统一上传水电表照片 -->
+    <section class="unified-upload-section">
+        <div class="upload-header">
+            <h2>📸 统一水电表读数上传</h2>
+            <p>上传包含所有房间水电表读数的照片，系统将自动识别并分配到具体房间</p>
+        </div>
+        
+        <div class="upload-btn-large" onclick="uploadUnifiedPhoto()">
+            <div class="upload-icon">📷</div>
+            <h3>点击上传水电表照片</h3>
+            <p>支持JPG、PNG格式，建议照片清晰完整</p>
+        </div>
+        
+        <input type="file" class="file-input" id="unified-photos" accept="image/*" multiple onchange="handleUnifiedPhotoUpload(this)">
+        
+        <div class="ocr-results-panel" id="ocrResultsPanel">
+            <div class="ocr-title">🔍 OCR识别结果 - 自动分配到各房间</div>
+            <div class="ocr-grid" id="ocrResultsGrid">
+                <!-- OCR结果将动态生成 -->
+            </div>
+        </div>
+    </section>
+
+    <!-- 房间列表 -->
+    <main class="rooms-container">
+        <!-- 统一水电表上传区域 -->
+    <section style="max-width: 1400px; margin: 2rem auto; padding: 0 2rem;">
+        <div class="section-title">📸 统一水电表上传</div>
+        <div style="background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; align-items: start;">
+                <div>
+                    <h3 style="color: #333; margin-bottom: 1rem;">📷 批量水电表拍照上传</h3>
+                    <p style="color: #666; margin-bottom: 1.5rem;">
+                        拍摄包含所有19户水电表的照片，系统会自动识别并分配到对应房间。
+                        支持多张照片批量识别，大大提高工作效率！
+                    </p>
+                    
+                    <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <h4 style="color: #007bff; margin-bottom: 0.5rem;">🎯 拍照建议：</h4>
+                        <ul style="color: #666; margin-left: 1.5rem; font-size: 0.9rem;">
+                            <li>确保数字清晰可见</li>
+                            <li>光线充足，避免阴影</li>
+                            <li>照片尽量水平拍摄</li>
+                            <li>每个房间号都清晰显示</li>
+                        </ul>
+                    </div>
+                    
+                    <button class="upload-btn" style="width: auto; display: inline-flex; align-items: center; gap: 0.5rem;" onclick="uploadBatchPhotos()">
+                        📷 批量上传水电表照片
+                    </button>
+                    <input type="file" class="file-input" id="batchFileInput" accept="image/*" multiple onchange="handleBatchUpload(this)">
+                </div>
+                
+                <div>
+                    <div style="background: #e3f2fd; padding: 1.5rem; border-radius: 8px; margin-bottom: 1rem;">
+                        <h4 style="color: #1976d2; margin-bottom: 0.5rem;">📊 识别统计</h4>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; font-size: 0.9rem;">
+                            <div>
+                                <div style="color: #666;">已识别房间</div>
+                                <div style="font-size: 1.5rem; font-weight: bold; color: #1976d2;" id="recognizedCount">0/19</div>
+                            </div>
+                            <div>
+                                <div style="color: #666;">识别准确率</div>
+                                <div style="font-size: 1.5rem; font-weight: bold; color: #4caf50;" id="accuracyRate">0%</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="upload-btn" style="width: auto; display: inline-flex; align-items: center; gap: 0.5rem; background: #fff3cd; border-color: #ffc107; color: #856404;" onclick="viewRecognitionHistory()">
+                        📋 查看识别历史
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 批量识别结果区域 -->
+            <div id="batchRecognitionResults" style="display: none; margin-top: 2rem;">
+                <h4 style="color: #333; margin-bottom: 1rem;">🎉 识别结果</h4>
+                <div id="resultsGrid" class="rooms-grid">
+                    <!-- 识别结果将在这里显示 -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 房间列表 -->
+    <main class="rooms-container">
+        <h2 class="section-title">🏢 房间管理</h2>
+
+        <!-- 1楼 -->
+        <div class="floor-grid">
+            <div class="floor-title">🏠 1楼</div>
+            <div class="rooms-grid" id="floor1">
+                <!-- 房间将通过JS动态生成 -->
+            </div>
+        </div>
+
+        <!-- 2楼 -->
+        <div class="floor-grid">
+            <div class="floor-title">🏠 2楼</div>
+            <div class="rooms-grid" id="floor2">
+                <!-- 房间将通过JS动态生成 -->
+            </div>
+        </div>
+
+        <!-- 3楼 -->
+        <div class="floor-grid">
+            <div class="floor-title">🏠 3楼</div>
+            <div class="rooms-grid" id="floor3">
+                <!-- 房间将通过JS动态生成 -->
+            </div>
+        </div>
+
+        <!-- 4楼 -->
+        <div class="floor-grid">
+            <div class="floor-title">🏠 4楼</div>
+            <div class="rooms-grid" id="floor4">
+                <!-- 房间将通过JS动态生成 -->
+            </div>
+        </div>
+
+        <!-- 5楼 -->
+        <div class="floor-grid">
+            <div class="floor-title">🏠 5楼</div>
+            <div class="rooms-grid" id="floor5">
+                <!-- 房间将通过JS动态生成 -->
+            </div>
+        </div>
+
+        <!-- 6楼 -->
+        <div class="floor-grid">
+            <div class="floor-title">🏠 6楼</div>
+            <div class="rooms-grid" id="floor6">
+                <!-- 房间将通过JS动态生成 -->
+            </div>
+        </div>
+    </main>
+
+    <!-- 房间详情模态框 -->
+    <div id="roomModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>房间详情</h3>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <form id="roomForm">
+                <div class="form-group">
+                    <label>房号</label>
+                    <input type="text" class="form-control" id="modalRoomNumber" readonly>
+                </div>
+                <div class="form-group">
+                    <label>租客姓名</label>
+                    <input type="text" class="form-control" id="modalTenantName" placeholder="请输入租客姓名">
+                </div>
+                <div class="form-group">
+                    <label>身份证号码</label>
+                    <input type="text" class="form-control" id="modalIdCard" placeholder="请输入身份证号码">
+                </div>
+                <div class="form-group">
+                    <label>联系电话</label>
+                    <input type="text" class="form-control" id="modalPhone" placeholder="请输入联系电话">
+                </div>
+                <div class="form-group">
+                    <label>月租金 (元)</label>
+                    <input type="number" class="form-control" id="modalRent" placeholder="请输入月租金">
+                </div>
+                <div class="form-group">
+                    <label>押金 (元)</label>
+                    <input type="number" class="form-control" id="modalDeposit" placeholder="请输入押金">
+                </div>
+                <div class="form-group">
+                    <label>管理费 (元)</label>
+                    <input type="number" class="form-control" id="modalManagementFee" placeholder="请输入管理费">
+                </div>
+                <div class="form-group">
+                    <label>合同到期日期</label>
+                    <input type="date" class="form-control" id="modalContractEnd">
+                </div>
+                <div class="form-group">
+                    <label>备注</label>
+                    <textarea class="form-control" id="modalRemarks" rows="3" placeholder="请输入备注信息"></textarea>
+                </div>
+                <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                    <button type="button" class="btn" style="background: #6c757d; color: white;" onclick="closeModal()">取消</button>
+                    <button type="submit" class="btn btn-primary">保存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // ==================== 数据管理 ====================
+        
+        // 固定房间结构
+        const ROOM_STRUCTURE = {
+            1: ['01', '02', '03'],
+            2: ['01', '02', '03', '04'],
+            3: ['01', '02', '03', '04'],
+            4: ['01', '02', '03', '04'],
+            5: ['01', '02'],
+            6: ['01', '02']
+        };
+
+        // 房间数据存储
+        let roomsData = {};
+
+        // 初始化房间数据
+        function initializeRoomsData() {
+            for (let floor in ROOM_STRUCTURE) {
+                ROOM_STRUCTURE[floor].forEach(room => {
+                    const roomKey = `${floor}${room}`;
+                    roomsData[roomKey] = roomsData[roomKey] || {
+                        floor: floor,
+                        room: room,
+                        roomNumber: `${floor}楼${room}房`,
+                        tenantName: '',
+                        idCard: '',
+                        phone: '',
+                        rent: 0,
+                        deposit: 0,
+                        managementFee: 50, // 添加管理费
+                        contractEnd: '',
+                        remarks: '',
+                        lastElectricMeter: 0,
+                        lastWaterMeter: 0,
+                        currentElectricMeter: 0,
+                        currentWaterMeter: 0,
+                        electricRate: 1.2,  // 电费单价 元/度
+                        waterRate: 3.5,   // 水费单价 元/吨
+                        isPaid: false,
+                        hasData: false,
+                        photoUrl: ''
+                    };
+                });
+            }
+            saveData();
+        }
+
+        // 从localStorage加载数据
+        function loadData() {
+            const saved = localStorage.getItem('rentalData');
+            if (saved) {
+                roomsData = JSON.parse(saved);
+            } else {
+                initializeRoomsData();
+            }
+        }
+
+        // 保存数据到localStorage
+        function saveData() {
+            localStorage.setItem('rentalData', JSON.stringify(roomsData));
+            updateStatistics();
+        }
+
+        // ==================== 用户认证 ====================
+        
+        // 检查登录状态
+        function checkAuth() {
+            const isLoggedIn = sessionStorage.getItem('isLoggedIn');
+            const loginTime = sessionStorage.getItem('loginTime');
+            
+            if (!isLoggedIn || !loginTime) {
+                window.location.href = 'index.html';
+                return;
+            }
+            
+            // 检查登录是否过期（2小时）
+            const now = new Date().getTime();
+            const timeDiff = now - parseInt(loginTime);
+            const twoHours = 2 * 60 * 60 * 1000;
+            
+            if (timeDiff > twoHours) {
+                sessionStorage.removeItem('isLoggedIn');
+                sessionStorage.removeItem('loginTime');
+                window.location.href = 'index.html';
+                return;
+            }
+        }
+
+        // 退出登录
+        function logout() {
+            if (confirm('确定要退出系统吗？')) {
+                sessionStorage.removeItem('isLoggedIn');
+                sessionStorage.removeItem('loginTime');
+                window.location.href = 'index.html';
+            }
+        }
+
+        // ==================== 统一水电表上传 ====================
+        
+        // 上传统一照片
+        function uploadUnifiedPhoto() {
+            document.getElementById('unified-photos').click();
+        }
+
+        // 处理统一照片上传
+        function handleUnifiedPhotoUpload(input) {
+            if (input.files && input.files.length > 0) {
+                const files = Array.from(input.files);
+                
+                // 显示OCR结果面板
+                const ocrPanel = document.getElementById('ocrResultsPanel');
+                const ocrGrid = document.getElementById('ocrResultsGrid');
+                ocrPanel.classList.add('active');
+                ocrGrid.innerHTML = '<div style="text-align: center; grid-column: 1/-1;">🔍 正在识别水电表读数...</div>';
+                
+                // 模拟多照片OCR识别
+                setTimeout(() => {
+                    recognizeAndDistributeMeters(files);
+                }, 2000);
+            }
+        }
+
+        // 识别并分配水电表读数到各房间
+        function recognizeAndDistributeMeters(files) {
+            const ocrGrid = document.getElementById('ocrResultsGrid');
+            let processedRooms = [];
+            
+            // 为每个房间模拟生成水电表读数
+            for (let floor in ROOM_STRUCTURE) {
+                ROOM_STRUCTURE[floor].forEach(room => {
+                    const roomKey = `${floor}${room}`;
+                    const roomData = roomsData[roomKey];
+                    
+                    // 模拟OCR识别到的读数
+                    const newElectricReading = roomData.lastElectricMeter + Math.floor(Math.random() * 100) + 50;
+                    const newWaterReading = roomData.lastWaterMeter + Math.floor(Math.random() * 10) + 5;
+                    
+                    // 更新房间数据
+                    roomData.lastElectricMeter = roomData.currentElectricMeter || roomData.lastElectricMeter;
+                    roomData.lastWaterMeter = roomData.currentWaterMeter || roomData.lastWaterMeter;
+                    roomData.currentElectricMeter = newElectricReading;
+                    roomData.currentWaterMeter = newWaterReading;
+                    roomData.hasData = true;
+                    
+                    processedRooms.push(roomKey);
+                });
+            }
+            
+            // 保存数据
+            saveData();
+            
+            // 显示OCR识别结果
+            displayOCRResults(processedRooms);
+            
+            // 重新渲染房间列表
+            setTimeout(() => {
+                renderRooms();
+            }, 1000);
+        }
+
+        // 显示OCR识别结果
+        function displayOCRResults(roomKeys) {
+            const ocrGrid = document.getElementById('ocrResultsGrid');
+            
+            const resultsHTML = roomKeys.map(roomKey => {
+                const roomData = roomsData[roomKey];
+                const electricUsage = roomData.currentElectricMeter - roomData.lastElectricMeter;
+                const waterUsage = roomData.currentWaterMeter - roomData.lastWaterMeter;
+                const electricFee = (electricUsage * roomData.electricRate).toFixed(2);
+                const waterFee = (waterUsage * roomData.waterRate).toFixed(2);
+                
+                return `
+                    <div class="ocr-room-result">
+                        <div class="ocr-room-title">${roomData.roomNumber}</div>
+                        <div style="font-size: 0.85rem; color: #666;">
+                            <div>⚡ 电表: ${roomData.currentElectricMeter}°</div>
+                            <div>💧 水表: ${roomData.currentWaterMeter}吨</div>
+                            <div style="margin-top: 0.5rem; font-weight: 500;">
+                                <div>电费: ¥${electricFee}</div>
+                                <div>水费: ¥${waterFee}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            ocrGrid.innerHTML = `
+                ${resultsHTML}
+                <div style="text-align: center; grid-column: 1/-1; margin-top: 1rem;">
+                    <div class="highlight-success">
+                        ✅ 成功识别${roomKeys.length}个房间的水电表读数<br>
+                        已自动分配到对应房间，请检查确认
+                    </div>
+                </div>
+            `;
+        }
+
+        // ==================== 房间管理 ====================
+        
+        // 渲染房间列表
+        function renderRooms() {
+            for (let floor in ROOM_STRUCTURE) {
+                const container = document.getElementById(`floor${floor}`);
+                container.innerHTML = '';
+                
+                ROOM_STRUCTURE[floor].forEach(room => {
+                    const roomKey = `${floor}${room}`;
+                    const roomData = roomsData[roomKey];
+                    const roomCard = createRoomCard(roomKey, roomData);
+                    container.appendChild(roomCard);
+                });
+            }
+            
+            updateStatistics();
+        }
+
+        // 创建房间卡片
+        function createRoomCard(roomKey, roomData) {
+            const card = document.createElement('div');
+            card.className = 'room-card';
+            
+            // 检查合同是否即将到期（30天内）
+            const today = new Date();
+            const contractEndDate = roomData.contractEnd ? new Date(roomData.contractEnd) : null;
+            const isExpiringSoon = contractEndDate && (contractEndDate - today) / (1000 * 60 * 60 * 24) <= 30 && (contractEndDate - today) > 0;
+            
+            card.innerHTML = `
+                <div class="room-header">
+                    <span class="room-number">${roomData.roomNumber}</span>
+                    <span class="payment-status ${roomData.isPaid ? 'status-paid' : 'status-unpaid'}">
+                        ${roomData.isPaid ? '已缴' : '未缴'}
+                    </span>
+                    ${isExpiringSoon ? '<div class="contract-expiry">!</div>' : ''}
+                </div>
+                
+                <div class="room-info">
+                    <div class="info-row">
+                        <span class="info-label">租客:</span>
+                        <span class="info-value">${roomData.tenantName || '空置'}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">手机:</span>
+                        <span class="info-value">${roomData.phone || '-'}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">租金:</span>
+                        <span class="info-value">¥${roomData.rent || 0}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">管理费:</span>
+                        <span class="info-value">¥${roomData.managementFee || 0}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">合同:</span>
+                        <span class="info-value">${roomData.contractEnd || '-'}</span>
+                    </div>
+                </div>
+                
+                <div class="meters-section">
+                    <div class="meters-title">📊 水电表读数</div>
+                    <div class="meter-row">
+                        <input type="number" class="meter-input" placeholder="电表(度)" 
+                               value="${roomData.currentElectricMeter || ''}" 
+                               onchange="updateMeterReading('${roomKey}', 'electric', this.value)">
+                        <input type="number" class="meter-input" placeholder="水表(吨)" 
+                               value="${roomData.currentWaterMeter || ''}" 
+                               onchange="updateMeterReading('${roomKey}', 'water', this.value)">
+                    </div>
+                    ${roomData.hasData ? `
+                        <div style="font-size: 0.8rem; color: #666; margin-top: 0.5rem;">
+                            电费: ¥${calculateElectricFee(roomKey)} | 水费: ¥${calculateWaterFee(roomKey)} | 管理费: ¥${roomData.managementFee || 0}
+                            <div style="margin-top: 0.25rem; font-weight: 600; color: #28a745;">
+                                总费用: ¥${totalRoomFee(roomKey)}
+                            </div>
+                        </div>
+                    ` : '<div style="font-size: 0.8rem; color: #666; margin-top: 0.5rem;">请在上方统一上传区域上传水电表照片</div>'}
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="btn btn-primary" onclick="editRoom('${roomKey}')">编辑信息</button>
+                    <button class="btn ${roomData.isPaid ? '' : 'btn-success'}" 
+                            onclick="togglePayment('${roomKey}')">
+                        ${roomData.isPaid ? '标记未缴' : '标记已缴'}
+                    </button>
+                </div>
+            `;
+            
+            return card;
+        }
+
+        // 计算房间总费用
+        function totalRoomFee(roomKey) {
+            const roomData = roomsData[roomKey];
+            const electricFee = parseFloat(calculateElectricFee(roomKey)) || 0;
+            const waterFee = parseFloat(calculateWaterFee(roomKey)) || 0;
+            const managementFee = roomData.managementFee || 0;
+            return (electricFee + waterFee + (roomData.rent || 0) + managementFee).toFixed(2);
+        }
+
+        // 更新表具读数
+        function updateMeterReading(roomKey, meterType, value) {
+            const numValue = parseFloat(value) || 0;
+            
+            if (meterType === 'electric') {
+                roomsData[roomKey].currentElectricMeter = numValue;
+            } else {
+                roomsData[roomKey].currentWaterMeter = numValue;
+            }
+            
+            roomsData[roomKey].hasData = true;
+            saveData();
+            renderRooms();
+        }
+
+        // 计算电费
+        function calculateElectricFee(roomKey) {
+            const roomData = roomsData[roomKey];
+            const usage = Math.max(0, roomData.currentElectricMeter - roomData.lastElectricMeter);
+            return (usage * roomData.electricRate).toFixed(2);
+        }
+
+        // 计算水费
+        function calculateWaterFee(roomKey) {
+            const roomData = roomsData[roomKey];
+            const usage = Math.max(0, roomData.currentWaterMeter - roomData.lastWaterMeter);
+            return (usage * roomData.waterRate).toFixed(2);
+        }
+
+        // 切换缴费状态
+        function togglePayment(roomKey) {
+            roomsData[roomKey].isPaid = !roomsData[roomKey].isPaid;
+            saveData();
+            renderRooms();
+        }
+
+        // ==================== 编辑房间 ====================
+        
+        let currentEditingRoom = null;
+
+        // 编辑房间信息
+        function editRoom(roomKey) {
+            currentEditingRoom = roomKey;
+            const roomData = roomsData[roomKey];
+            
+            document.getElementById('modalRoomNumber').value = roomData.roomNumber;
+            document.getElementById('modalTenantName').value = roomData.tenantName || '';
+            document.getElementById('modalIdCard').value = roomData.idCard || '';
+            document.getElementById('modalPhone').value = roomData.phone || '';
+            document.getElementById('modalRent').value = roomData.rent || '';
+            document.getElementById('modalDeposit').value = roomData.deposit || '';
+            document.getElementById('modalManagementFee').value = roomData.managementFee || '';
+            document.getElementById('modalContractEnd').value = roomData.contractEnd || '';
+            document.getElementById('modalRemarks').value = roomData.remarks || '';
+            
+            openModal();
+        }
+
+        // 打开模态框
+        function openModal() {
+            document.getElementById('roomModal').classList.add('active');
+        }
+
+        // 关闭模态框
+        function closeModal() {
+            document.getElementById('roomModal').classList.remove('active');
+            currentEditingRoom = null;
+        }
+
+        // 保存房间信息
+        document.getElementById('roomForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            if (currentEditingRoom) {
+                roomsData[currentEditingRoom] = {
+                    ...roomsData[currentEditingRoom],
+                    tenantName: document.getElementById('modalTenantName').value,
+                    idCard: document.getElementById('modalIdCard').value,
+                    phone: document.getElementById('modalPhone').value,
+                    rent: parseFloat(document.getElementById('modalRent').value) || 0,
+                    deposit: parseFloat(document.getElementById('modalDeposit').value) || 0,
+                    managementFee: parseFloat(document.getElementById('modalManagementFee').value) || 50,
+                    contractEnd: document.getElementById('modalContractEnd').value,
+                    remarks: document.getElementById('modalRemarks').value
+                };
+                
+                saveData();
+                renderRooms();
+                closeModal();
+            }
+        });
+
+        // ==================== 统计信息 ====================
+        
+        function updateStatistics() {
+            const roomsArray = Object.values(roomsData);
+            
+            // 总房间数
+            document.getElementById('totalRooms').textContent = roomsArray.length;
+            
+            // 已租房间
+            const occupied = roomsArray.filter(room => room.tenantName).length;
+            document.getElementById('occupiedRooms').textContent = occupied;
+            
+            // 月租总收入
+            const totalRent = roomsArray.reduce((sum, room) => sum + room.rent, 0);
+            document.getElementById('totalRent').textContent = `¥${totalRent.toLocaleString()}`;
+            
+            // 已缴费数量
+            const paidCount = roomsArray.filter(room => room.isPaid).length;
+            document.getElementById('paidCount').textContent = paidCount;
+        }
+
+        // ==================== 初始化 ====================
+        
+        // 页面加载完成后初始化
+        window.addEventListener('load', function() {
+            checkAuth();
+            loadData();
+            renderRooms();
+        });
+
+        // 定期更新统计信息
+        setInterval(updateStatistics, 30000); // 每30秒更新一次
+    </script>
+</body>
+</html>

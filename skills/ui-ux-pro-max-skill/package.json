@@ -1,0 +1,10 @@
+{
+  "name": "ui-ux-pro-max-skill",
+  "version": "1.0.0",
+  "description": "Advanced UI/UX design and development skill",
+  "main": "index.js",
+  "type": "module",
+  "keywords": ["ui", "ux", "design", "frontend", "accessibility"],
+  "author": "OpenClaw",
+  "license": "MIT"
+}

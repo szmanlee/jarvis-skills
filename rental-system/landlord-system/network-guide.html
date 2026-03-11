@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>局域网访问指南</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f5f7fa;
+            line-height: 1.6;
+        }
+        .card {
+            background: white;
+            padding: 25px;
+            margin: 15px 0;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .success { border-left: 5px solid #28a745; background: #d4edda; }
+        .info { border-left: 5px solid #17a2b8; background: #d1ecf1; }
+        .warning { border-left: 5px solid #ffc107; background: #fff3cd; }
+        .btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn:hover { background: #0056b3; }
+        .btn-success { background: #28a745; }
+        .btn-success:hover { background: #218838; }
+        .ip-display {
+            font-size: 24px;
+            font-weight: bold;
+            color: #007bff;
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .step {
+            background: #f8f9fa;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border-left: 4px solid #007bff;
+        }
+        .code {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: monospace;
+            border: 1px solid #dee2e6;
+            overflow-x: auto;
+        }
+        .device-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .device-card {
+            background: #e8f4fd;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            border: 2px solid #bee5eb;
+        }
+        .qr-placeholder {
+            width: 150px;
+            height: 150px;
+            background: #f8f9fa;
+            border: 2px dashed #dee2e6;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6c757d;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🌐 房东收租管理系统 - 局域网访问指南</h1>
+    
+    <div class="card success">
+        <h2>🎉 系统已准备就绪！</h2>
+        <p>按照以下步骤，您可以让同一局域网内的所有设备访问这个房租管理系统。</p>
+    </div>
+
+    <div class="ip-display">
+        🖥️ 您的局域网IP地址：<span id="ipAddress">192.168.32.23</span>
+    </div>
+
+    <div class="card info">
+        <h2>🚀 快速启动步骤</h2>
+        
+        <div class="step">
+            <h3>步骤 1: 启动局域网服务器</h3>
+            <p><strong>Windows用户:</strong> 双击 <code>start-local-network.bat</code></p>
+            <p><strong>Mac/Linux用户:</strong> 双击 <code>start-local-network.sh</code></p>
+            <p>或手动执行命令：</p>
+            <div class="code">python3 -m http.server 8080 --bind 0.0.0.0</div>
+        </div>
+
+        <div class="step">
+            <h3>步骤 2: 访问系统</h3>
+            <p><strong>在本机访问:</strong></p>
+            <div class="code">http://localhost:8080</div>
+            
+            <p><strong>在手机/平板/其他电脑访问:</strong></p>
+            <div class="code">http://192.168.32.23:8080</div>
+        </div>
+
+        <div class="step">
+            <h3>步骤 3: 登录系统</h3>
+            <p>👤 <strong>用户名:</strong> <code>admin</code></p>
+            <p>🔑 <strong>密码:</strong> <code>admin123</code></p>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>📱 支持的设备和访问方式</h2>
+        
+        <div class="device-grid">
+            <div class="device-card">
+                <div style="font-size: 2rem;">💻</div>
+                <h4>Windows电脑</h4>
+                <p>Chrome、Edge、Firefox</p>
+            </div>
+            <div class="device-card">
+                <div style="font-size: 2rem;">🍎</div>
+                <h4>Mac电脑</h4>
+                <p>Safari、Chrome</p>
+            </div>
+            <div class="device-card">
+                <div style="font-size: 2rem;">📱</div>
+                <h4>Android手机</h4>
+                <p>Chrome、Firefox等</p>
+            </div>
+            <div class="device-card">
+                <div style="font-size: 2rem;">📱</div>
+                <h4>iPhone/iPad</h4>
+                <p>Safari、Chrome</p>
+            </div>
+            <div class="device-card">
+                <div style="font-size: 2rem;">🖥️</div>
+                <h4>平板电脑</h4>
+                <p>平板浏览器</p>
+            </div>
+            <div class="device-card">
+                <div style="font-size: 2rem;">📺</div>
+                <h4>智能电视</h4>
+                <p>内置浏览器</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>📋 测试访问地址</h2>
+        <p>请点击以下按钮测试不同设备的访问：</p>
+        
+        <a href="http://localhost:8080" target="_blank" class="btn">🖥️ 本机访问</a>
+        <a href="http://192.168.32.23:8080" target="_blank" class="btn btn-success">🌐 局域网访问</a>
+        <button class="btn" onclick="copyIP()">📋 复制IP地址</button>
+        <button class="btn" onclick="showQR()">📱 生成二维码</button>
+    </div>
+
+    <div class="card warning">
+        <h2>⚠️ 重要注意事项</h2>
+        <ul>
+            <li>🔥 <strong>防火墙:</strong> 确保Windows防火墙允许Python HTTP服务器通过端口8080</li>
+            <li>📶 <strong>同一网络:</strong> 所有设备必须连接到同一个WiFi网络</li>
+            <li>🔒 <strong>安全性:</strong> 系统数据存储在本地浏览器中，相对安全</li>
+            <li>⚡ <strong>网络质量:</strong> 建议连接稳定WiFi以获得最佳体验</li>
+            <li>📱 <strong>移动端:</strong> 手机访问时会自动适配移动端界面</li>
+        </ul>
+    </div>
+
+    <div class="card info">
+        <h2>🔧 故障排除</h2>
+        
+        <div class="step">
+            <h4>❓ 无法访问？</h4>
+            <ul>
+                <li>检查Python是否正确安装</li>
+                <li>确认端口8080没有被占用</li>
+                <li>检查防火墙设置</li>
+                <li>确认所有设备在同一网络</li>
+            </ul>
+        </div>
+
+        <div class="step">
+            <h4>❓ 页面加载慢？</h4>
+            <ul>
+                <li>检查WiFi信号强度</li>
+                <li>关闭其他占用网络的应用</li>
+                <li>尝试关闭移动端后台应用</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- 二维码显示区域 -->
+    <div id="qrSection" style="display: none;" class="card">
+        <h2>📱 手机扫码访问</h2>
+        <center>
+            <div class="qr-placeholder">
+                二维码<br>(实际应用中可使用<br>在线二维码生成器生成)
+            </div>
+            <p style="margin-top: 10px;">
+                <strong>地址:</strong> http://192.168.32.23:8080
+            </p>
+            <p>
+                <small>可以使用"草料二维码"等工具生成二维码</small>
+            </p>
+        </center>
+    </div>
+
+    <script>
+        // 获取并显示IP地址
+        function displayIP() {
+            const ipElement = document.getElementById('ipAddress');
+            
+            // 从当前域名推断IP（如果已经在局域网访问）
+            if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+                ipElement.textContent = window.location.hostname;
+            }
+        }
+
+        // 复制IP地址到剪贴板
+        function copyIP() {
+            const ipText = 'http://192.168.32.23:8080';
+            
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(ipText).then(() => {
+                    alert('✅ IP地址已复制到剪贴板：\n' + ipText);
+                }).catch(err => {
+                    console.error('复制失败:', err);
+                    fallbackCopyTextToClipboard(ipText);
+                });
+            } else {
+                fallbackCopyTextToClipboard(ipText);
+            }
+        }
+
+        // 备用复制方法
+        function fallbackCopyTextToClipboard(text) {
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    alert('✅ IP地址已复制到剪贴板：\n' + text);
+                } else {
+                    prompt('请手动复制以下地址：', text);
+                }
+            } catch (err) {
+                prompt('请手动复制以下地址：', text);
+            }
+            
+            document.body.removeChild(textArea);
+        }
+
+        // 显示/隐藏二维码
+        function showQR() {
+            const qrSection = document.getElementById('qrSection');
+            if (qrSection.style.display === 'none') {
+                qrSection.style.display = 'block';
+                qrSection.scrollIntoView({ behavior: 'smooth' });
+            } else {
+                qrSection.style.display = 'none';
+            }
+        }
+
+        // 检测网络状态
+        function checkNetworkStatus() {
+            if (navigator.onLine) {
+                console.log('✅ 网络连接正常');
+            } else {
+                console.log('❌ 网络连接异常');
+            }
+        }
+
+        // 页面加载完成后执行
+        window.addEventListener('load', function() {
+            displayIP();
+            checkNetworkStatus();
+            
+            // 显示使用提示
+            setTimeout(() => {
+                console.log('🌐 局域网访问指南已加载');
+                console.log('📍 建议访问地址: http://192.168.32.23:8080');
+            }, 1000);
+        });
+
+        // 监听网络状态变化
+        window.addEventListener('online', () => {
+            console.log('🌐 网络已连接');
+        });
+
+        window.addEventListener('offline', () => {
+            console.log('📵 网络已断开');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>石岩房租管理系统</title>
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: http: https:; font-src 'self' data: http: https:;">
+    <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64,AAABAAEAEBAAAAEAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAAAQAABILAAASCwAAAAAAAAAAAAD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A//8AAP//AAD//wAA//8AAP//AAD//wAA//8AAP//AAD//wAA//8AAP//AAD//wAA//8AAP//AAD//wAA//8AAP//AAD//wAA//8AAP//AAD//wAA//8AAP//AAD//wAA//8AAP//AAD//wAA//8AAP//AAD//wAA//8AAP//AAD//wAA//8AAP//AAD//wAA//8AAP//AAD//wAA//8AAP//AAD//wAA//8AAP//AAD//wAA">
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #64748b;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --background: #f8fafc;
+            --card-bg: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+            --shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+            --shadow-lg: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: var(--background);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-color), #1d4ed8);
+            color: white;
+            padding: 2rem 0;
+            box-shadow: var(--shadow);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .meta {
+            opacity: 0.9;
+            font-size: 0.95rem;
+        }
+
+        .stats-section {
+            margin: 2rem 0;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            border-left: 4px solid var(--primary-color);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--primary-color), #1d4ed8);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .actions-section {
+            margin: 2rem 0;
+        }
+
+        .btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-right: 1rem;
+        }
+
+        .btn:hover {
+            background: #1d4ed8;
+            transform: translateY(-1px);
+            box-shadow: var(--shadow);
+        }
+
+        .btn-success {
+            background: var(--success-color);
+        }
+
+        .btn-success:hover {
+            background: #059669;
+        }
+
+        .months-section {
+            margin: 2rem 0;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .months-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .month-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            transition: all 0.3s;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .month-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary-color);
+        }
+
+        .month-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .month-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .month-status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .status-active {
+            background: #dcfce7;
+            color: var(--success-color);
+        }
+
+        .status-completed {
+            background: #dbeafe;
+            color: var(--primary-color);
+        }
+
+        .month-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .month-stat {
+            text-align: center;
+            padding: 0.75rem;
+            background: var(--background);
+            border-radius: 8px;
+        }
+
+        .month-stat-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .month-stat-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .month-total {
+            text-align: center;
+            padding: 1rem;
+            background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+            border-radius: 8px;
+            border: 1px solid #bae6fd;
+        }
+
+        .total-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.25rem;
+        }
+
+        .total-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-secondary);
+        }
+
+        .empty-icon {
+            font-size: 4rem;
+            opacity: 0.3;
+            margin-bottom: 1rem;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 2rem;
+        }
+
+        .btn-cancel {
+            background: var(--secondary-color);
+        }
+
+        .btn-cancel:hover {
+            background: #475569;
+        }
+
+        .loading {
+            display: flex;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .spinner {
+            border: 3px solid var(--border-color);
+            border-top: 3px solid var(--primary-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+
+        .debug-info {
+            background: #f0f9ff;
+            border: 1px solid #bae6fd;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 2rem;
+            font-family: monospace;
+            font-size: 0.875rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+                gap: 1rem;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .months-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .section-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: stretch;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div>
+                    <h1>🏢 石岩房租管理系统</h1>
+                    <div class="meta">19户精准管理 · 水电费自动统计 · 专业财务报表</div>
+                </div>
+                <div>
+                    <div style="font-size: 0.9rem; opacity: 0.9;" id="currentTime"></div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Stats Overview -->
+        <section class="stats-section">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">🏠</div>
+                    <div class="stat-label">管理户数</div>
+                    <div class="stat-value" id="totalTenants">-</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📅</div>
+                    <div class="stat-label">统计月份</div>
+                    <div class="stat-value" id="monthsCount">-</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">💰</div>
+                    <div class="stat-label">本月总收入</div>
+                    <div class="stat-value" id="currentRevenue">¥-</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📊</div>
+                    <div class="stat-label">累计总收入</div>
+                    <div class="stat-value" id="totalRevenue">¥-</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Main Actions -->
+        <section class="actions-section">
+            <button class="btn btn-success" onclick="showAddMonthModal()">
+                ➕ 添加新月份
+            </button>
+            <button class="btn" onclick="goToTenants()">
+                👥 住户管理
+            </button>
+            <button class="btn" onclick="testApiConnection()">
+                🔍 测试连接
+            </button>
+        </section>
+
+        <!-- Months List -->
+        <section class="months-section">
+            <div class="section-header">
+                <h2 class="section-title">📋 月份管理</h2>
+            </div>
+            <div id="monthsContainer">
+                <div class="loading">
+                    <div class="spinner"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Debug Info -->
+        <section class="debug-info" id="debugInfo" style="display: none;">
+            <strong>🔍 调试信息：</strong>
+            <div id="debugContent"></div>
+        </section>
+    </main>
+
+    <script>
+        // 全局变量
+        let monthsData = [];
+        let debugMode = false;
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('🚀 页面加载完成，开始初始化...');
+            updateCurrentTime();
+            setInterval(updateCurrentTime, 1000);
+            
+            // 检测URL参数
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('debug') === 'true') {
+                debugMode = true;
+                document.getElementById('debugInfo').style.display = 'block';
+            }
+            
+            // 延迟加载数据，确保页面完全加载
+            setTimeout(() => {
+                loadMonths();
+            }, 100);
+            
+            // 设置默认值
+            const now = new Date();
+            document.getElementById('yearInput').value = now.getFullYear();
+            document.getElementById('monthInput').value = now.getMonth() + 1;
+            document.getElementById('nameInput').value = `${now.getFullYear()}年${now.getMonth() + 1}月`;
+            
+            // 表单事件
+            document.getElementById('addMonthForm').addEventListener('submit', handleAddMonth);
+            
+            // 自动隐藏调试信息
+            if (debugMode) {
+                setTimeout(() => {
+                    document.getElementById('debugInfo').style.display = 'none';
+                }, 5000);
+            }
+        });
+
+        // 更新当前时间
+        function updateCurrentTime() {
+            const now = new Date();
+            const timeString = now.toLocaleString('zh-CN', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                weekday: 'long'
+            });
+            document.getElementById('currentTime').textContent = timeString;
+        }
+
+        // 测试API连接
+        async function testApiConnection() {
+            console.log('🔍 开始测试API连接...');
+            updateDebug('开始测试API连接...');
+            
+            try {
+                const response = await fetch('/api/months');
+                updateDebug(`API请求状态: ${response.status}`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                
+                const data = await response.json();
+                updateDebug(`API数据获取成功，返回${data.length}条记录`);
+                console.log('✅ API连接测试成功:', data);
+                alert('✅ API连接正常！数据已加载。');
+                
+                // 重新尝试加载数据
+                loadMonths();
+            } catch (error) {
+                updateDebug(`API连接失败: ${error.message}`);
+                console.error('❌ API连接测试失败:', error);
+                alert(`❌ API连接失败: ${error.message}\n请检查服务器是否正常运行。`);
+            }
+        }
+
+        // 更新调试信息
+        function updateDebug(message) {
+            if (debugMode) {
+                const debugContent = document.getElementById('debugContent');
+                const timestamp = new Date().toLocaleTimeString();
+                debugContent.innerHTML += `[${timestamp}] ${message}<br>`;
+            }
+        }
+
+        // 加载月份列表
+        async function loadMonths() {
+            try {
+                console.log('📅 开始加载月份数据...');
+                console.log('当前时间:', new Date().toLocaleString());
+                updateDebug('开始加载月份数据...');
+                
+                // 显示加载状态
+                const container = document.getElementById('monthsContainer');
+                if (container) {
+                    container.innerHTML = '<div class="loading"><div class="spinner"></div><p style="text-align: center; margin-top: 1rem;">正在加载数据...</p></div>';
+                }
+                
+                // 设置超时保护
+                const timeoutPromise = new Promise((_, reject) => {
+                    setTimeout(() => reject(new Error('请求超时，请检查网络或刷新重试')), 10000);
+                });
+                
+                const dataPromise = fetch('/api/months').then(response => {
+                    console.log('API响应状态:', response.status);
+                    updateDebug(`API响应状态: ${response.status}`);
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+                    return response.json();
+                });
+                
+                const data = await Promise.race([dataPromise, timeoutPromise]);
+                
+                monthsData = data || [];
+                console.log('获取的月份数据:', monthsData);
+                console.log('数据长度:', monthsData.length);
+                updateDebug(`获取${monthsData.length}条月份数据`);
+                
+                // 立即渲染
+                renderMonths();
+                updateStats();
+                
+                console.log('✅ 月份数据加载完成');
+                updateDebug('月份数据加载完成');
+            } catch (error) {
+                console.error('❌ 加载月份数据失败:', error);
+                updateDebug(`加载失败: ${error.message}`);
+                showError('加载月份数据失败: ' + error.message);
+                
+                // 显示错误状态
+                const container = document.getElementById('monthsContainer');
+                if (container) {
+                    container.innerHTML = `
+                        <div style="text-align: center; padding: 2rem;">
+                            <div style="color: var(--danger-color); font-size: 2rem;">⚠️</div>
+                            <h3>数据加载失败</h3>
+                            <p style="color: var(--text-secondary); margin: 1rem 0;">${error.message}</p>
+                            <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 1rem;">
+                                <button onclick="loadMonths()" class="btn">🔄 重试</button>
+                                <button onclick="testApiConnection()" class="btn btn-success">🔍 测试连接</button>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+        }
+
+        // 渲染月份列表
+        function renderMonths() {
+            const container = document.getElementById('monthsContainer');
+            
+            if (monthsData.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📊</div>
+                        <h3>暂无数据</h3>
+                        <p>点击上方"添加新月份"按钮开始管理房租数据</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const monthsHTML = monthsData.map(month => {
+                const isCurrentMonth = month.year === new Date().getFullYear() && 
+                                   month.month === new Date().getMonth() + 1;
+                
+                return `
+                    <div class="month-card" onclick="goToMonth(${month.id})">
+                        <div class="month-header">
+                            <div class="month-title">${month.name}</div>
+                            <div class="month-status ${isCurrentMonth ? 'status-active' : 'status-completed'}">
+                                ${isCurrentMonth ? '当前月份' : '已完成'}
+                            </div>
+                        </div>
+                        <div class="month-stats">
+                            <div class="month-stat">
+                                <div class="month-stat-value">¥${formatNumber(month.total_rent || 0)}</div>
+                                <div class="month-stat-label">房租收入</div>
+                            </div>
+                            <div class="month-stat">
+                                <div class="month-stat-value">¥${formatNumber((month.total_electric || 0) + (month.total_water || 0))}</div>
+                                <div class="month-stat-label">水电费</div>
+                            </div>
+                        </div>
+                        <div class="month-total">
+                            <div class="total-label">总收入</div>
+                            <div class="total-value">¥${formatNumber(month.total_amount || 0)}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            container.innerHTML = `<div class="months-grid">${monthsHTML}</div>`;
+            updateDebug('月份列表渲染完成');
+        }
+
+        // 更新统计数据
+        async function updateStats() {
+            document.getElementById('monthsCount').textContent = monthsData.length;
+            updateDebug('开始更新统计数据...');
+            
+            // 加载住户数量
+            try {
+                const response = await fetch('/api/tenants');
+                if (response.ok) {
+                    const tenants = await response.json();
+                    const activeTenants = tenants.filter(t => t.is_active === 1);
+                    document.getElementById('totalTenants').textContent = activeTenants.length;
+                    updateDebug(`住户统计更新: ${activeTenants.length}户活跃`);
+                } else {
+                    updateDebug(`住户API错误: ${response.status}`);
+                }
+            } catch (error) {
+                console.error('Error loading tenants count:', error);
+                updateDebug(`住户统计失败: ${error.message}`);
+                document.getElementById('totalTenants').textContent = '18'; // 默认显示
+            }
+            
+            const currentMonth = monthsData.find(m => 
+                m.year === new Date().getFullYear() && 
+                m.month === new Date().getMonth() + 1
+            );
+            
+            document.getElementById('currentRevenue').textContent = currentMonth 
+                ? `¥${formatNumber(currentMonth.total_amount || 0)}`
+                : '¥0';
+            
+            const totalRevenue = monthsData.reduce((sum, month) => sum + (month.total_amount || 0), 0);
+            document.getElementById('totalRevenue').textContent = `¥${formatNumber(totalRevenue)}`;
+            
+            updateDebug('统计数据更新完成');
+        }
+
+        // 格式化数字
+        function formatNumber(num) {
+            return (num || 0).toLocaleString('zh-CN', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+        }
+
+        // 跳转到月份详情
+        function goToMonth(monthId) {
+            console.log(`跳转到月份详情页面，ID: ${monthId}`);
+            window.location.href = `/month/${monthId}`;
+        }
+
+        // 跳转到住户管理
+        function goToTenants() {
+            console.log('跳转到住户管理页面');
+            window.location.href = `/tenants`;
+        }
+
+        // 显示添加月份模态框
+        function showAddMonthModal() {
+            document.getElementById('addMonthModal').classList.add('active');
+        }
+
+        // 隐藏添加月份模态框
+        function hideAddMonthModal() {
+            document.getElementById('addMonthModal').classList.remove('active');
+            document.getElementById('addMonthForm').reset();
+        }
+
+        // 处理添加月份
+        async function handleAddMonth(event) {
+            event.preventDefault();
+            
+            const year = parseInt(document.getElementById('yearInput').value);
+            const month = parseInt(document.getElementById('monthInput').value);
+            const name = document.getElementById('nameInput').value;
+            
+            try {
+                const response = await fetch('/api/months', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ year, month, name })
+                });
+                
+                if (!response.ok) throw new Error('Failed to create month');
+                
+                hideAddMonthModal();
+                await loadMonths();
+                showSuccess('月份创建成功！');
+            } catch (error) {
+                console.error('Error creating month:', error);
+                showError('创建月份失败');
+            }
+        }
+
+        // 显示错误信息
+        function showError(message) {
+            console.error('错误:', message);
+            // 使用更友好的错误显示
+            const errorDiv = document.createElement('div');
+            errorDiv.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: var(--danger-color);
+                color: white;
+                padding: 1rem 1.5rem;
+                border-radius: 8px;
+                box-shadow: var(--shadow-lg);
+                z-index: 10000;
+                max-width: 400px;
+            `;
+            errorDiv.innerHTML = `❌ ${message}`;
+            document.body.appendChild(errorDiv);
+            
+            setTimeout(() => {
+                document.body.removeChild(errorDiv);
+            }, 5000);
+        }
+
+        // 显示成功信息
+        function showSuccess(message) {
+            console.log('成功:', message);
+            const successDiv = document.createElement('div');
+            successDiv.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: var(--success-color);
+                color: white;
+                padding: 1rem 1.5rem;
+                border-radius: 8px;
+                box-shadow: var(--shadow-lg);
+                z-index: 10000;
+                max-width: 400px;
+            `;
+            successDiv.innerHTML = `✅ ${message}`;
+            document.body.appendChild(successDiv);
+            
+            setTimeout(() => {
+                document.body.removeChild(successDiv);
+            }, 3000);
+        }
+
+        // 点击模态框外部关闭
+        document.getElementById('addMonthModal')?.addEventListener('click', (e) => {
+            if (e.target.id === 'addMonthModal') {
+                hideAddMonthModal();
+            }
+        });
+    </script>
+
+    <!-- Add Month Modal -->
+    <div id="addMonthModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">📅 添加新月份</h3>
+            </div>
+            <form id="addMonthForm">
+                <div class="form-group">
+                    <label class="form-label">年份</label>
+                    <input type="number" class="form-control" id="yearInput" min="2020" max="2030" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">月份</label>
+                    <select class="form-control" id="monthInput" required>
+                        <option value="1">1月</option>
+                        <option value="2">2月</option>
+                        <option value="3">3月</option>
+                        <option value="4">4月</option>
+                        <option value="5">5月</option>
+                        <option value="6">6月</option>
+                        <option value="7">7月</option>
+                        <option value="8">8月</option>
+                        <option value="9">9月</option>
+                        <option value="10">10月</option>
+                        <option value="11">11月</option>
+                        <option value="12">12月</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">月份名称 (可选)</label>
+                    <input type="text" class="form-control" id="nameInput" placeholder="例如: 2026年3月">
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-cancel" onclick="hideAddMonthModal()">取消</button>
+                    <button type="submit" class="btn btn-success">创建月份</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

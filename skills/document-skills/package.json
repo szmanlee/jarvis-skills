@@ -1,0 +1,10 @@
+{
+  "name": "document-skills",
+  "version": "1.0.0",
+  "description": "Document management and processing skill",
+  "main": "index.js",
+  "type": "module",
+  "keywords": ["documents", "pdf", "word", "conversion", "ocr"],
+  "author": "OpenClaw",
+  "license": "MIT"
+}

@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>月份详情 - 石岩房租管理系统</title>
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #64748b;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --background: #f8fafc;
+            --card-bg: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+            --shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+            --shadow-lg: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: var(--background);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, var(--primary-color), #1d4ed8);
+            color: white;
+            padding: 1.5rem 0;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .back-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s;
+            text-decoration: none;
+            font-size: 1rem;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        /* Navigation */
+        nav {
+            background: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 0;
+            margin-bottom: 2rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-stats {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-stat {
+            text-align: center;
+        }
+
+        .nav-stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .nav-stat-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        /* Table Section */
+        .table-section {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .table-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .table-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn:hover {
+            background: #1d4ed8;
+            transform: translateY(-1px);
+        }
+
+        .btn-success {
+            background: var(--success-color);
+        }
+
+        .btn-success:hover {
+            background: #059669;
+        }
+
+        .btn-warning {
+            background: var(--warning-color);
+        }
+
+        .btn-warning:hover {
+            background: #d97706;
+        }
+
+        /* Table */
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background: var(--background);
+            font-weight: 600;
+            color: var(--text-primary);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        td {
+            vertical-align: middle;
+        }
+
+        .room-cell {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .editable {
+            background: transparent;
+            border: 1px solid transparent;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            width: 100%;
+            transition: border-color 0.2s;
+        }
+
+        .editable:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background: white;
+        }
+
+        .editable::-webkit-inner-spin-button,
+        .editable::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .calculated {
+            background: #f0f9ff;
+            font-weight: 500;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-small {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+        }
+
+        /* Floating Action Button */
+        .fab {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--success-color);
+            color: white;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: var(--shadow-lg);
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+
+        .fab:hover {
+            transform: scale(1.1);
+            background: #059669;
+        }
+
+        /* Loading */
+        .loading {
+            display: flex;
+            justify-content: center;
+            padding: 4rem;
+        }
+
+        .spinner {
+            border: 3px solid var(--border-color);
+            border-top: 3px solid var(--primary-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 10px;
+            }
+
+            .table-wrapper {
+                font-size: 0.75rem;
+            }
+
+            th, td {
+                padding: 0.5rem;
+            }
+
+            .nav-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .table-actions {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="header-left">
+                    <a href="/" class="back-btn">← 返回主页</a>
+                    <h1 id="pageTitle">📊 月份详情</h1>
+                </div>
+                <div id="headerDate"></div>
+            </div>
+        </div>
+    </header>
+
+    <nav>
+        <div class="container">
+            <div class="nav-content">
+                <div class="nav-stats">
+                    <div class="nav-stat">
+                        <div class="nav-stat-value" id="totalRent">¥-</div>
+                        <div class="nav-stat-label">房租收入</div>
+                    </div>
+                    <div class="nav-stat">
+                        <div class="nav-stat-value" id="totalElectric">¥-</div>
+                        <div class="nav-stat-label">电费</div>
+                    </div>
+                    <div class="nav-stat">
+                        <div class="nav-stat-value" id="totalWater">¥-</div>
+                        <div class="nav-stat-label">水费</div>
+                    </div>
+                    <div class="nav-stat">
+                        <div class="nav-stat-value" id="totalManagement">¥-</div>
+                        <div class="nav-stat-label">管理费</div>
+                    </div>
+                    <div class="nav-stat">
+                        <div class="nav-stat-value" id="grandTotal">¥-</div>
+                        <div class="nav-stat-label">总收入</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+        <!-- Charges Table -->
+        <section class="table-section">
+            <div class="table-header">
+                <h2 class="table-title">🏠 19户费用明细</h2>
+                <div class="table-actions">
+                    <button class="btn" onclick="exportData()">📤 导出CSV</button>
+                    <button class="btn btn-warning" onclick="batchUpdateRates()">⚙️ 更新费率</button>
+                    <button class="btn btn-success" onclick="saveAllChanges()">💾 保存所有</button>
+                </div>
+            </div>
+            <div class="table-wrapper">
+                <table id="chargesTable">
+                    <thead>
+                        <tr>
+                            <th>房号</th>
+                            <th>住户姓名</th>
+                            <th>上月电表(度)</th>
+                            <th>当月电表(度)</th>
+                            <th>电费(¥)</th>
+                            <th>上月水表(吨)</th>
+                            <th>当月水表(吨)</th>
+                            <th>水费(¥)</th>
+                            <th>房租(¥)</th>
+                            <th>管理费(¥)</th>
+                            <th>合计(¥)</th>
+                            <th>收款人</th>
+                            <th>备注</th>
+                            <th>状态</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="chargesTableBody">
+                        <tr>
+                            <td colspan="15" class="loading">
+                                <div class="spinner"></div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <!-- Floating Action Buttons -->
+    <button class="fab" onclick="scrollToTop()" title="回到顶部">
+        ↑
+    </button>
+
+    <script>
+        // 全局变量
+        let monthData = null;
+        let chargesData = [];
+        let editingData = {};
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            const monthId = getMonthIdFromUrl();
+            if (monthId) {
+                loadMonthData(monthId);
+            } else {
+                showError('URL中没有月份ID');
+            }
+        });
+
+        // 从URL获取月份ID
+        function getMonthIdFromUrl() {
+            const path = window.location.pathname;
+            const match = path.match(/\/month\/(\d+)/);
+            const id = match ? parseInt(match[1]) : null;
+            console.log('从URL获取月份ID:', id);
+            return id;
+        }
+
+        // 加载月份数据
+        async function loadMonthData(monthId) {
+            try {
+                console.log('开始加载月份数据, ID:', monthId);
+                console.log('当前时间:', new Date().toLocaleString());
+                
+                // 显示加载状态
+                const tbody = document.getElementById('chargesTableBody');
+                if (tbody) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="15" style="text-align: center; padding: 2rem;">
+                                <div class="spinner"></div>
+                                <p style="margin-top: 1rem;">正在加载${monthId}月份数据...</p>
+                            </td>
+                        </tr>
+                    `;
+                }
+                
+                // 设置超时保护
+                const timeoutPromise = new Promise((_, reject) => {
+                    setTimeout(() => reject(new Error('请求超时')), 15000);
+                });
+                
+                const dataPromise = fetch(`/api/months/${monthId}`).then(response => {
+                    console.log('API响应状态:', response.status);
+                    if (!response.ok) throw new Error('Failed to load month data');
+                    return response.json();
+                });
+                
+                const data = await Promise.race([dataPromise, timeoutPromise]);
+                
+                console.log('获取的月份数据:', data);
+                
+                monthData = data.month;
+                chargesData = data.charges || [];
+                
+                console.log('月份信息:', monthData);
+                console.log('费用记录数量:', chargesData.length);
+                
+                if (chargesData.length === 0) {
+                    console.warn('警告: 费用记录为空');
+                }
+                
+                updateUI();
+                
+                console.log('月份数据加载完成');
+            } catch (error) {
+                console.error('Error loading month data:', error);
+                showError('加载数据失败: ' + error.message);
+                
+                // 显示错误状态
+                const tbody = document.getElementById('chargesTableBody');
+                if (tbody) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="15" style="text-align: center; padding: 2rem;">
+                                <div style="color: var(--danger-color); font-size: 2rem;">⚠️</div>
+                                <h3>数据加载失败</h3>
+                                <p>${error.message}</p>
+                                <button onclick="loadMonthData(${monthId})" style="margin-top: 1rem;" class="btn">重试</button>
+                            </td>
+                        </tr>
+                    `;
+                }
+            }
+        }
+
+        // 更新UI
+        function updateUI() {
+            if (!monthData) return;
+
+            // 更新页面标题
+            document.getElementById('pageTitle').textContent = `📊 ${monthData.name}`;
+            document.getElementById('headerDate').textContent = `${monthData.year}年${monthData.month}月`;
+
+            // 更新统计数据
+            const stats = monthData.statistics || {};
+            document.getElementById('totalRent').textContent = formatCurrency(stats.total_rent || 0);
+            document.getElementById('totalElectric').textContent = formatCurrency(stats.total_electric || 0);
+            document.getElementById('totalWater').textContent = formatCurrency(stats.total_water || 0);
+            document.getElementById('totalManagement').textContent = formatCurrency(stats.total_management || 0);
+            document.getElementById('grandTotal').textContent = formatCurrency(stats.total_amount || 0);
+
+            // 渲染表格
+            renderTable();
+        }
+
+        // 渲染表格
+        function renderTable() {
+            const tbody = document.getElementById('chargesTableBody');
+            
+            if (chargesData.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="15" style="text-align: center; padding: 2rem;">暂无数据</td></tr>';
+                return;
+            }
+
+            const rowsHTML = chargesData.map(charge => {
+                const chargeId = charge.id;
+                const roomNumber = charge.room_number;
+                
+                // 计算水电费
+                const electricUsage = Math.max(0, (charge.electric_current_month || 0) - (charge.electric_last_month || 0));
+                const waterUsage = Math.max(0, (charge.water_current_month || 0) - (charge.water_last_month || 0));
+                const electricAmount = electricUsage * 1.00;  // 1元/度
+                const waterAmount = waterUsage * 7.00;      // 7元/吨
+                
+                // 保存到临时数据
+                if (!editingData[chargeId]) {
+                    editingData[chargeId] = { ...charge };
+                }
+                
+                const isPaid = charge.payment_status === 'paid';
+                
+                return `
+                    <tr data-charge-id="${chargeId}">
+                        <td class="room-cell">${roomNumber}</td>
+                        <td>${charge.tenant_name || '-'}</td>
+                        <td>
+                            <input type="number" class="editable" 
+                                   value="${charge.electric_last_month || 0}"
+                                   onchange="updateChargeField(${chargeId}, 'electric_last_month', this.value)">
+                        </td>
+                        <td>
+                            <input type="number" class="editable" 
+                                   value="${charge.electric_current_month || 0}"
+                                   onchange="updateChargeField(${chargeId}, 'electric_current_month', this.value)">
+                        </td>
+                        <td class="calculated">${formatCurrency(electricAmount)}</td>
+                        <td>
+                            <input type="number" step="0.1" class="editable" 
+                                   value="${charge.water_last_month || 0}"
+                                   onchange="updateChargeField(${chargeId}, 'water_last_month', this.value)">
+                        </td>
+                        <td>
+                            <input type="number" step="0.1" class="editable" 
+                                   value="${charge.water_current_month || 0}"
+                                   onchange="updateChargeField(${chargeId}, 'water_current_month', this.value)">
+                        </td>
+                        <td class="calculated">${formatCurrency(waterAmount)}</td>
+                        <td>
+                            <input type="number" class="editable" 
+                                   value="${charge.rent_amount || 0}"
+                                   onchange="updateChargeField(${chargeId}, 'rent_amount', this.value)">
+                        </td>
+                        <td>
+                            <input type="number" class="editable" 
+                                   value="${charge.management_fee || 0}"
+                                   onchange="updateChargeField(${chargeId}, 'management_fee', this.value)">
+                        </td>
+                        <td class="calculated" style="font-weight: bold; color: var(--primary-color);">
+                            ${formatCurrency((charge.rent_amount || 0) + electricAmount + waterAmount + (charge.management_fee || 0))}
+                        </td>
+                        <td>
+                            <input type="text" class="editable" style="width: 80px;"
+                                   value="${charge.collector || ''}"
+                                   onchange="updateChargeField(${chargeId}, 'collector', this.value)">
+                        </td>
+                        <td>
+                            <input type="text" class="editable" style="width: 120px;"
+                                   value="${charge.notes || ''}"
+                                   onchange="updateChargeField(${chargeId}, 'notes', this.value)">
+                        </td>
+                        <td>
+                            <span style="color: ${isPaid ? 'var(--success-color)' : 'var(--warning-color)'};">
+                                ${isPaid ? '✅ 已收' : '⏳ 待收'}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn btn-small ${isPaid ? 'btn-warning' : 'btn-success'}" 
+                                        onclick="togglePaymentStatus(${chargeId})">
+                                    ${isPaid ? '标记待收' : '标记已收'}
+                                </button>
+                                <button class="btn btn-small" onclick="saveCharge(${chargeId})">保存</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+
+            tbody.innerHTML = rowsHTML;
+        }
+
+        // 更新费用字段
+        function updateChargeField(chargeId, field, value) {
+            if (!editingData[chargeId]) {
+                editingData[chargeId] = {};
+            }
+            
+            const numValue = field.includes('amount') || field.includes('fee') 
+                ? parseFloat(value) || 0 
+                : value;
+            
+            editingData[chargeId][field] = numValue;
+            
+            // 重新计算相关字段
+            if (field.includes('electric') || field.includes('water')) {
+                recalculateRow(chargeId);
+            }
+        }
+
+        // 重新计算行数据
+        function recalculateRow(chargeId) {
+            const data = editingData[chargeId];
+            if (!data) return;
+
+            const electricUsage = Math.max(0, (data.electric_current_month || 0) - (data.electric_last_month || 0));
+            const waterUsage = Math.max(0, (data.water_current_month || 0) - (data.water_last_month || 0));
+            const electricAmount = electricUsage * 1.00;
+            const waterAmount = waterUsage * 7.00;
+            const total = (data.rent_amount || 0) + electricAmount + waterAmount + (data.management_fee || 0);
+
+            data.electric_usage = electricUsage;
+            data.electric_amount = electricAmount;
+            data.water_usage = waterUsage;
+            data.water_amount = waterAmount;
+            data.total_amount = total;
+
+            // 更新表格显示
+            renderTable();
+        }
+
+        // 保存单个费用记录
+        async function saveCharge(chargeId) {
+            const data = editingData[chargeId];
+            if (!data) {
+                showError('没有找到编辑数据');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/charges/${chargeId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if (!response.ok) throw new Error('Failed to save charge');
+
+                const result = await response.json();
+                
+                // 更新实际数据
+                const index = chargesData.findIndex(c => c.id === chargeId);
+                if (index !== -1) {
+                    chargesData[index] = { ...chargesData[index], ...data, ...result.calculated };
+                }
+                
+                updateUI();
+                showSuccess('保存成功！');
+            } catch (error) {
+                console.error('Error saving charge:', error);
+                showError('保存失败');
+            }
+        }
+
+        // 切换支付状态
+        async function togglePaymentStatus(chargeId) {
+            const charge = chargesData.find(c => c.id === chargeId);
+            if (!charge) return;
+
+            const newStatus = charge.payment_status === 'paid' ? 'pending' : 'paid';
+            
+            try {
+                const response = await fetch(`/api/charges/${chargeId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ ...charge, payment_status: newStatus })
+                });
+
+                if (!response.ok) throw new Error('Failed to update status');
+
+                charge.payment_status = newStatus;
+                renderTable();
+                showSuccess(`状态已更新为${newStatus === 'paid' ? '已收' : '待收'}`);
+            } catch (error) {
+                console.error('Error updating status:', error);
+                showError('更新状态失败');
+            }
+        }
+
+        // 保存所有更改
+        async function saveAllChanges() {
+            const promises = Object.keys(editingData).map(chargeId => {
+                if (editingData[chargeId]) {
+                    return fetch(`/api/charges/${chargeId}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(editingData[chargeId])
+                    });
+                }
+            }).filter(Boolean);
+
+            try {
+                await Promise.all(promises);
+                showSuccess('所有更改已保存！');
+                loadMonthData(getMonthIdFromUrl()); // 重新加载数据
+            } catch (error) {
+                console.error('Error saving all changes:', error);
+                showError('批量保存失败');
+            }
+        }
+
+        // 导出数据
+        function exportData() {
+            let csv = '房号,住户姓名,上月电表(度),当月电表(度),电费(¥),上月水表(吨),当月水表(吨),水费(¥),房租(¥),管理费(¥),合计(¥),收款人,备注,状态\n';
+            
+            chargesData.forEach(charge => {
+                const electricUsage = Math.max(0, (charge.electric_current_month || 0) - (charge.electric_last_month || 0));
+                const waterUsage = Math.max(0, (charge.water_current_month || 0) - (charge.water_last_month || 0));
+                const electricAmount = electricUsage * 1.00;
+                const waterAmount = waterUsage * 7.00;
+                const total = (charge.rent_amount || 0) + electricAmount + waterAmount + (charge.management_fee || 0);
+                
+                const status = charge.payment_status === 'paid' ? '已收' : '待收';
+                
+                csv += `${charge.room_number},${charge.tenant_name || ''},${charge.electric_last_month || 0},${charge.electric_current_month || 0},${electricAmount},${charge.water_last_month || 0},${charge.water_current_month || 0},${waterAmount},${charge.rent_amount || 0},${charge.management_fee || 0},${total},${charge.collector || ''},${charge.notes || ''},${status}\n`;
+            });
+
+            // 创建下载链接
+            const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `${monthData.name}_收租统计.csv`;
+            link.click();
+        }
+
+        // 格式化货币
+        function formatCurrency(amount) {
+            return '¥' + parseFloat(amount || 0).toLocaleString('zh-CN', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+        }
+
+        // 回到顶部
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // 显示错误信息
+        function showError(message) {
+            alert('❌ ' + message);
+        }
+
+        // 显示成功信息
+        function showSuccess(message) {
+            alert('✅ ' + message);
+        }
+
+        // 批量更新费率
+        function batchUpdateRates() {
+            alert('📋 更新费率功能开发中...\n当前费率：电费 1元/度, 水费 7元/吨');
+        }
+    </script>
+</body>
+</html>

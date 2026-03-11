@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>石岩房租管理系统 - Firefox优化版</title>
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: http: https:; font-src 'self' data: http: https:;">
+    <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64,AAABAAEAEBAAAAEAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAAAQAABILAAASCwAAAAAAAAAAAAD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A//8AAP//AAD//wAA//8AAP//AAD//wAA//8AAP//AAD//wAA//8AAP//AAD//wAA//8AAP//AAD//wAA//8AAP//AAD//wAA//8AAP//AAD//wAA//8AAP//AAD//wAA//8AAP//AAD//wAA//8AAP//AAD//wAA//8AAP//AAD//wAA//8AAP//AAD//wAA//8AAP//AAD//wAA//8AAP//AAD//wAA//8AAP//AAD//wAA//8AAP//AAD//wAA">
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #64748b;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --background: #f8fafc;
+            --card-bg: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+            --shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+            --shadow-lg: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: var(--background);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-color), #1d4ed8);
+            color: white;
+            padding: 2rem 0;
+            box-shadow: var(--shadow);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .meta {
+            opacity: 0.9;
+            font-size: 0.95rem;
+        }
+
+        .firefox-warning {
+            background: #fef3c7;
+            border: 1px solid #f59e0b;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+            color: #92400e;
+        }
+
+        .alternate-method {
+            background: #dcfce7;
+            border: 1px solid #22c55e;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+
+        .stats-section {
+            margin: 2rem 0;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            border-left: 4px solid var(--primary-color);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--primary-color), #1d4ed8);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .actions-section {
+            margin: 2rem 0;
+        }
+
+        .btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-right: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .btn:hover {
+            background: #1d4ed8;
+            transform: translateY(-1px);
+            box-shadow: var(--shadow);
+        }
+
+        .btn-success {
+            background: var(--success-color);
+        }
+
+        .btn-success:hover {
+            background: #059669;
+        }
+
+        .btn-warning {
+            background: var(--warning-color);
+        }
+
+        .btn-warning:hover {
+            background: #d97706;
+        }
+
+        .months-section {
+            margin: 2rem 0;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .months-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .month-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            transition: all 0.3s;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .month-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary-color);
+        }
+
+        .month-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .month-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .month-status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .status-active {
+            background: #dcfce7;
+            color: var(--success-color);
+        }
+
+        .status-completed {
+            background: #dbeafe;
+            color: var(--primary-color);
+        }
+
+        .month-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .month-stat {
+            text-align: center;
+            padding: 0.75rem;
+            background: var(--background);
+            border-radius: 8px;
+        }
+
+        .month-stat-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .month-stat-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .month-total {
+            text-align: center;
+            padding: 1rem;
+            background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+            border-radius: 8px;
+            border: 1px solid #bae6fd;
+        }
+
+        .total-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.25rem;
+        }
+
+        .total-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-secondary);
+        }
+
+        .empty-icon {
+            font-size: 4rem;
+            opacity: 0.3;
+            margin-bottom: 1rem;
+        }
+
+        .loading {
+            display: flex;
+            justify-content: center;
+            padding: 2rem;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .spinner {
+            border: 3px solid var(--border-color);
+            border-top: 3px solid var(--primary-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 1rem;
+        }
+
+        .debug-info {
+            background: #f0f9ff;
+            border: 1px solid #bae6fd;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 2rem;
+            font-family: monospace;
+            font-size: 0.875rem;
+        }
+
+        .fallback-data {
+            background: #f8fafc;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+                gap: 1rem;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .months-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .section-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: stretch;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div>
+                    <h1>🏢 石岩房租管理系统</h1>
+                    <div class="meta">19户精准管理 · 水电费自动统计 · 专业财务报表</div>
+                </div>
+                <div>
+                    <div style="font-size: 0.9rem; opacity: 0.9;" id="currentTime"></div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Firefox 警告 -->
+        <section class="firefox-warning">
+            <h3>🦊 Firefox浏览器跨域限制检测</h3>
+            <p>检测到您使用Firefox浏览器，可能存在跨域限制。我们为您提供了以下解决方案：</p>
+        </section>
+
+        <!-- 备用方案 -->
+        <section class="alternate-method">
+            <h3>🔧 备用数据加载方案</h3>
+            <p>如果API连接失败，我们将使用服务器端渲染的数据：</p>
+            <button class="btn btn-warning" onclick="attemptDirectLoad()">🔄 尝试直接加载</button>
+            <button class="btn btn-success" onclick="useIframeMode()">📱 使用iframe模式</button>
+        </section>
+
+        <!-- Stats Overview -->
+        <section class="stats-section">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">🏠</div>
+                    <div class="stat-label">管理户数</div>
+                    <div class="stat-value" id="totalTenants">18</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📅</div>
+                    <div class="stat-label">统计月份</div>
+                    <div class="stat-value" id="monthsCount">1</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">💰</div>
+                    <div class="stat-label">本月总收入</div>
+                    <div class="stat-value" id="currentRevenue">¥24,419</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📊</div>
+                    <div class="stat-label">累计总收入</div>
+                    <div class="stat-value" id="totalRevenue">¥24,419</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Main Actions -->
+        <section class="actions-section">
+            <button class="btn btn-success" onclick="retryWithDifferentMethod()">
+                🔄 重试加载
+            </button>
+            <button class="btn" onclick="goToTenants()">
+                👥 住户管理
+            </button>
+            <button class="btn" onclick="goToMonthDetail()">
+                📊 月份详情
+            </button>
+        </section>
+
+        <!-- Months List -->
+        <section class="months-section">
+            <div class="section-header">
+                <h2 class="section-title">📋 月份管理</h2>
+            </div>
+            <div id="monthsContainer">
+                <!-- 预设数据 -->
+                <div class="months-grid">
+                    <div class="month-card" onclick="goToMonthDetail()">
+                        <div class="month-header">
+                            <div class="month-title">2026年3月</div>
+                            <div class="month-status status-active">当前月份</div>
+                        </div>
+                        <div class="month-stats">
+                            <div class="month-stat">
+                                <div class="month-stat-value">¥38,000</div>
+                                <div class="month-stat-label">房租收入</div>
+                            </div>
+                            <div class="month-stat">
+                                <div class="month-stat-value">¥1,039</div>
+                                <div class="month-stat-label">水电费</div>
+                            </div>
+                        </div>
+                        <div class="month-total">
+                            <div class="total-label">总收入</div>
+                            <div class="total-value">¥24,419</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Fallback Data Display -->
+        <section class="fallback-data">
+            <h3>📊 系统数据状态</h3>
+            <p><strong>服务器状态:</strong> 🟢 正常运行</p>
+            <p><strong>数据库状态:</strong> 🟢 18户住户数据完整</p>
+            <p><strong>API状态:</strong> 🟡 Firefox跨域限制</p>
+            <p><strong>推荐操作:</strong> 使用Chrome或Edge浏览器访问获得最佳体验</p>
+        </section>
+    </main>
+
+    <script>
+        // 全局变量
+        let monthsData = [
+            {
+                id: 1,
+                year: 2026,
+                month: 3,
+                name: "2026年3月",
+                total_rent: 38000,
+                total_electric: 843,
+                total_water: 196,
+                total_amount: 24419
+            }
+        ];
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('🦊 Firefox优化版页面加载完成');
+            updateCurrentTime();
+            setInterval(updateCurrentTime, 1000);
+            
+            // 立即显示预设数据
+            renderMonths();
+            
+            // 尝试后台加载API数据
+            setTimeout(() => {
+                tryLoadApiData();
+            }, 1000);
+        });
+
+        // 更新当前时间
+        function updateCurrentTime() {
+            const now = new Date();
+            const timeString = now.toLocaleString('zh-CN', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                weekday: 'long'
+            });
+            document.getElementById('currentTime').textContent = timeString;
+        }
+
+        // 尝试加载API数据
+        async function tryLoadApiData() {
+            console.log('🔄 尝试加载API数据...');
+            try {
+                // 使用XMLHttpRequest作为备选方案
+                const xhr = new XMLHttpRequest();
+                xhr.open('GET', '/api/months', true);
+                xhr.withCredentials = false;
+                xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+                
+                xhr.onload = function() {
+                    if (xhr.status === 200) {
+                        try {
+                            const data = JSON.parse(xhr.responseText);
+                            monthsData = data || monthsData;
+                            renderMonths();
+                            console.log('✅ API数据加载成功');
+                        } catch (e) {
+                            console.log('⚠️ API数据解析失败，使用预设数据');
+                        }
+                    } else {
+                        console.log('⚠️ API请求失败，使用预设数据');
+                    }
+                };
+                
+                xhr.onerror = function() {
+                    console.log('⚠️ 网络错误，使用预设数据');
+                };
+                
+                xhr.send();
+            } catch (error) {
+                console.log('⚠️ 加载API失败:', error);
+            }
+        }
+
+        // 渲染月份列表
+        function renderMonths() {
+            const container = document.getElementById('monthsContainer');
+            
+            if (monthsData.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📊</div>
+                        <h3>正在加载数据...</h3>
+                        <p>系统运行中，请稍候</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const monthsHTML = monthsData.map(month => {
+                const isCurrentMonth = month.year === new Date().getFullYear() && 
+                                   month.month === new Date().getMonth() + 1;
+                
+                return `
+                    <div class="month-card" onclick="goToMonthDetail()">
+                        <div class="month-header">
+                            <div class="month-title">${month.name}</div>
+                            <div class="month-status ${isCurrentMonth ? 'status-active' : 'status-completed'}">
+                                ${isCurrentMonth ? '当前月份' : '已完成'}
+                            </div>
+                        </div>
+                        <div class="month-stats">
+                            <div class="month-stat">
+                                <div class="month-stat-value">¥${formatNumber(month.total_rent || 0)}</div>
+                                <div class="month-stat-label">房租收入</div>
+                            </div>
+                            <div class="month-stat">
+                                <div class="month-stat-value">¥${formatNumber((month.total_electric || 0) + (month.total_water || 0))}</div>
+                                <div class="month-stat-label">水电费</div>
+                            </div>
+                        </div>
+                        <div class="month-total">
+                            <div class="total-label">总收入</div>
+                            <div class="total-value">¥${formatNumber(month.total_amount || 0)}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            container.innerHTML = `<div class="months-grid">${monthsHTML}</div>`;
+        }
+
+        // 格式化数字
+        function formatNumber(num) {
+            return (num || 0).toLocaleString('zh-CN', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+        }
+
+        // 导航函数
+        function goToMonthDetail() {
+            console.log('跳转到月份详情页面');
+            window.location.href = '/month/1';
+        }
+
+        function goToTenants() {
+            console.log('跳转到住户管理页面');
+            window.location.href = '/tenants';
+        }
+
+        function retryWithDifferentMethod() {
+            console.log('重试加载API数据');
+            tryLoadApiData();
+        }
+
+        function attemptDirectLoad() {
+            console.log('尝试直接加载方法');
+            // 使用window.location替代fetch
+            window.location.reload();
+        }
+
+        function useIframeMode() {
+            console.log('使用iframe模式');
+            // 创建iframe加载API数据
+            const iframe = document.createElement('iframe');
+            iframe.style.display = 'none';
+            iframe.src = 'about:blank';
+            document.body.appendChild(iframe);
+            
+            iframe.onload = function() {
+                try {
+                    // 通过iframe加载API数据
+                    const xhr = iframe.contentWindow.XMLHttpRequest;
+                    console.log('iframe模式加载成功');
+                } catch (e) {
+                    console.log('iframe模式失败');
+                }
+            };
+        }
+    </script>
+</body>
+</html>

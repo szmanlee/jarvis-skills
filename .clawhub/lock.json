@@ -1,0 +1,85 @@
+{
+  "version": 1,
+  "skills": {
+    "skill-creator": {
+      "version": "0.1.0",
+      "installedAt": 1771979714509
+    },
+    "task-status": {
+      "version": "1.0.0",
+      "installedAt": 1771979763408
+    },
+    "deepwiki": {
+      "version": "1.0.0",
+      "installedAt": 1771979773055
+    },
+    "backend-patterns": {
+      "version": "0.1.2",
+      "installedAt": 1771979821977
+    },
+    "voice-reply": {
+      "version": "1.0.0",
+      "installedAt": 1771979830798
+    },
+    "deploy-agent": {
+      "version": "1.1.0",
+      "installedAt": 1771979892049
+    },
+    "logseq": {
+      "version": "1.0.0",
+      "installedAt": 1771979955060
+    },
+    "senior-architect": {
+      "version": "1.0.0",
+      "installedAt": 1771980615368
+    },
+    "idea-coach": {
+      "version": "0.2.0",
+      "installedAt": 1771980841166
+    },
+    "smart-auto-updater": {
+      "version": "1.0.0",
+      "installedAt": 1771980850703
+    },
+    "pndr": {
+      "version": "1.0.20260202",
+      "installedAt": 1771980855688
+    },
+    "skill-vetter": {
+      "version": "1.0.0",
+      "installedAt": 1771980963010
+    },
+    "pr-reviewer": {
+      "version": "1.0.1",
+      "installedAt": 1771980969091
+    },
+    "code-mentor": {
+      "version": "1.0.2",
+      "installedAt": 1771980976331
+    },
+    "git-summary": {
+      "version": "1.0.0",
+      "installedAt": 1771981579115
+    },
+    "docker-sandbox-lucas": {
+      "version": "1.0.1",
+      "installedAt": 1771992601762
+    },
+    "git-essentials": {
+      "version": "1.0.0",
+      "installedAt": 1771991540208
+    },
+    "openclaw-backup": {
+      "version": "1.0.0",
+      "installedAt": 1771992003829
+    },
+    "memory-git-sync": {
+      "version": "1.0.0",
+      "installedAt": 1771992422224
+    },
+    "pdf-ocr": {
+      "version": "1.0.0",
+      "installedAt": 1772723178357
+    }
+  }
+}
